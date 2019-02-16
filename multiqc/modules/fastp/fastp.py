@@ -150,6 +150,11 @@ class MultiqcModule(BaseMultiqcModule):
         for i,v in enumerate(cmd):
             if v == '-i':
                 s_name = self.clean_s_name(cmd[i+1], f['root'])
+        if s_name == 'fastp': # input might be stdin, try output file before failing
+            for i,v in enumerate(cmd):
+                if v == '-o':
+                    s_name = self.clean_s_name(cmd[i+1], f['root'])
+                    log.warn('Guessed sample name from fastp command output file: {}. Check assumption!'.format(s_name))
         if s_name == 'fastp':
             log.warn('Could not parse sample name from fastp command: {}'.format(f['fn']))
 
