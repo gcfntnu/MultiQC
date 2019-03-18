@@ -8,6 +8,14 @@
     * Totally cheating - it uses Picard MarkDuplicates but with a custom search pattern and naming
 
 #### Module updates:
+* **bcl2fastq**
+    * Added handling of demultiplexing of more than 2 reads
+* **HiC Explorer**
+    * Fixed bug where module tries to parse QC_table.txt, a new log file in hicexplorer v2.2.
+* **QoRTs**
+    * Fixed bug where `--dirs` broke certain input files. ([#821](https://github.com/ewels/MultiQC/issues/821))
+* **RSeQC**
+    * Fixed bug where Junction Saturation plot for a single sample was mislabelling the lines.
 * **Samtools**
     * Utilize in-built `read_count_multiplier` functionality to plot `flagstat` results more nicely
 * **SnpEff**
@@ -16,11 +24,16 @@
     * Fixed a bug where `tstv_by_qual.py` produced invalid json from infinity-values.
 
 #### New MultiQC Features:
-_..no updates yet.._
+* Added some installation docs for windows
+* Added some docs about using MultiQC in bioinformatics pipelines
+* Rewrote Docker image
+    * New base image `czentye/matplotlib-minimal` reduces image size from ~200MB to ~80MB
+    * Proper installation method ensures latest version of the code
+    * New entrypoint allows easier command-line usage
 
 #### Bug Fixes:
 * MultiQC now ignores all `.md5` files
-* Added some installation docs for windows
+* Use `SafeLoader` for PyYaml load calls, avoiding recent warning messages.
 
 
 

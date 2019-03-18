@@ -5,6 +5,7 @@ Using MultiQC:
   Using Reports: reports.md
   Configuration: config.md
   Customising Reports: customisation.md
+  Using MultiQC in pipelines: pipelines.md
   Common Problems: troubleshooting.md
 MultiQC Modules:
   Pre-alignment:
