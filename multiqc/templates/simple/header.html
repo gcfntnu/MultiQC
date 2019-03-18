@@ -29,7 +29,7 @@ No offer to play a YouTube tutorial video and so on.
 
 {% if config.intro_text != False %}
 <p class="lead">
-  {{ config.intro_text if config.intro_text is not none else 'A modular tool to aggregate results from bioinformatics analyses across many samples into a single report.' }}
+  {{ config.intro_text if config.intro_text is not none else 'A modular tool to aggregate results from bioinformatics analyses across many samples into a single report.' | safe }}
 </p>
 {% endif %}
 
