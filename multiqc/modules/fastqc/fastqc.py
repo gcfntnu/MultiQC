@@ -317,6 +317,10 @@ class MultiqcModule(BaseMultiqcModule):
 
             _The duplication detection requires an exact sequence match over the whole length of
             the sequence. Any reads over 75bp in length are truncated to 50bp for this analysis._
+
+             Ideally you should have equal amount of sequences in each sample. In practice this is rare, 
+            but make a note if the differences are more than 50-150% and ensure that your 
+            bioinformatician is aware of the unequal library sizes. If you are unsure it would probably be best to contact *GCF* directly.
             ''',
             plot = bargraph.plot(pdata, pcats, pconfig)
         )
@@ -364,6 +368,12 @@ class MultiqcModule(BaseMultiqcModule):
             calls (green), calls of reasonable quality (orange), and calls of poor quality (red).
             The quality of calls on most platforms will degrade as the run progresses, so it is
             common to see base calls falling into the orange area towards the end of a read._
+
+            A Phred score is a measure of the quality of nuceleotide identification from the sequencer. 
+            You can get background on the quality measure Phred Score [here](https://en.wikipedia.org/wiki/Phred_quality_score). 
+            For short and average length reads (50-100) we expect all nucelotides to be in the green area. 
+            For longer reads (150-300), it is common to have a drop in quality at the end of reads especially for 
+            read number two in a paired end sequencing run.
             ''',
             plot = linegraph.plot(data, pconfig)
         )
@@ -494,6 +504,11 @@ class MultiqcModule(BaseMultiqcModule):
             Whilst this is a true technical bias, it isn't something which can be corrected
             by trimming and in most cases doesn't seem to adversely affect the downstream
             analysis._
+
+            If your libraries are prepped at GCF, we use some kits that produce a biased 
+            sequencing ouput in the first 7-10 bases. Ask us if you are unsure.
+            Also be aware that you may have a low diversity input by design and this quality figure
+            would be misguided.
             ''',
             content = html
         )
@@ -687,13 +702,17 @@ class MultiqcModule(BaseMultiqcModule):
 
         if not multiple_lenths:
             lengths = 'bp , '.join([str(l) for l in list(seq_lengths)])
-            desc = 'All samples have sequences of a single length ({}bp).'.format(lengths)
+            desc = 'All samples have sequences of a single length ({}bp). This is as excpected by GCF generated data.'.format(lengths)
             if len(seq_lengths) > 1:
                 desc += ' See the <a href="#general_stats">General Statistics Table</a>.'
             self.add_section (
                 name = 'Sequence Length Distribution',
                 anchor = 'fastqc_sequence_length_distribution',
                 description = '<div class="alert alert-info">{}</div>'.format(desc)
+                helptext = '''
+                GCF will usually do no read trimming on the fastq files. If not otherwise specified by user 
+                this plot should show only reads at sequencing length.
+                '''
             )
         else:
             pconfig = {
@@ -779,6 +798,9 @@ class MultiqcModule(BaseMultiqcModule):
             and generally raising other categories. More specific enrichments of subsets, or
             the presence of low complexity contaminants will tend to produce spikes towards the
             right of the plot._
+
+            Not that, especially for RNA-seq, the duplication rates may be overestimated. 
+            Anything between 25-60% is normal for RNA.
             ''',
             plot = linegraph.plot(data, pconfig)
         )

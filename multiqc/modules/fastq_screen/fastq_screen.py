@@ -46,12 +46,22 @@ class MultiqcModule(BaseMultiqcModule):
         log.info("Found {} reports".format(len(self.fq_screen_data)))
 
         # Section 1 - Alignment Profiles
+        helptext = '''
+        We use subset of 400,000 reads from (and only the first read of paired end sequencing) to 
+        screen against common organisms (Human, Rat and Mouse), the internal control (Phi X 174 bacteriophage genome) 
+        and common contaminants database [UniVec](https://www.ncbi.nlm.nih.gov/tools/vecscreen/univec/). 
+        Large amount of reads in an unectpected genome is indicative of a contamination. PhiX (5-10%) is indicative of indexing issues 
+        and signficant hits in UniVec may indicate contamination issues. 
+        Note that sequence homology in these databases is pretty high. For example, so will a human sample easily have >10% 
+        reads that matches perfect to the mouse genome.
+        '''
+        
         # Posh plot only works for around 20 samples, 8 organisms.
         if len(self.fq_screen_data) * self.num_orgs <= 160 and not config.plots_force_flat and not getattr(config, 'fastqscreen_simpleplot', False):
-            self.add_section( content = self.fqscreen_plot() )
+            self.add_section( content=self.fqscreen_plot(), helptext=helptext )
         # Use simpler plot that works with many samples
         else:
-            self.add_section( plot = self.fqscreen_simple_plot() )
+            self.add_section( plot=self.fqscreen_simple_plot(), helptext=helptext )
 
         # Write the total counts and percentages to files
         self.write_data_file(self.parse_csv(), 'multiqc_fastq_screen')
@@ -130,7 +140,7 @@ class MultiqcModule(BaseMultiqcModule):
         getCats = True
         data = list()
         p_types = OrderedDict()
-        p_types['multiple_hits_multiple_libraries'] = {'col': '#7f0000', 'name': 'Multiple Hits, Multiple Genomes' }
+        p_types['multiple_hits_multiple_libraries'] = {'col': '#c11d1d', 'name': 'Multiple Hits, Multiple Genomes' }
         p_types['one_hit_multiple_libraries'] = {'col': '#ff0000', 'name': 'One Hit, Multiple Genomes' }
         p_types['multiple_hits_one_library'] = {'col': '#00007f', 'name': 'Multiple Hits, One Genome' }
         p_types['one_hit_one_library'] = {'col': '#0000ff', 'name': 'One Hit, One Genome' }
@@ -237,7 +247,7 @@ class MultiqcModule(BaseMultiqcModule):
             'cpswitch_c_active': False,
             'hide_zero_cats': False
         }
-        cats['Multiple Genomes'] = { 'name': 'Multiple Genomes', 'color': '#820000' }
+        cats['Multiple Genomes'] = { 'name': 'Multiple Genomes', 'color': '#c11d1d' }
         cats['No hits'] = { 'name': 'No hits', 'color': '#cccccc' }
 
         return bargraph.plot(data, cats, pconfig)
