@@ -146,6 +146,7 @@ setup(
             'sections = multiqc.templates.sections',
             'simple = multiqc.templates.simple',
             'geo = multiqc.templates.geo',
+            'gcf = multiqc.templates.gcf'
         ],
         # 'multiqc.cli_options.v1': [
             # 'my-new-option = myplugin.cli:new_option'

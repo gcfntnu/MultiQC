@@ -65,6 +65,20 @@ class MultiqcModule(BaseMultiqcModule):
             name = 'Lane Statistics',
             anchor = 'bcl2fastq-lanestats',
             description = 'Statistics about each lane for each flowcell',
+            helptext = """This table needs to be interpreted with respect to the sequencer machine used. 
+            You can see the type of sequencer used at the top of this page.
+
+            The expected yield for illumina sequencer is summarized by [Illumina](https://emea.illumina.com/systems/sequencing-platforms.html)
+            In short:\n
+
+            | Machine | Max output | Max Reads |
+            |---------|------------|-----------|
+            | MiSeq   |  7.5 Gb    | 20-25 M   |
+            | NextSeq | 120 Gb     | 400 M     |
+            | HighSeq | 1500 Gb    | 2500 B    |
+            
+            (due to different read lengths and/or reagent kits these number may be smaller)
+            """,
             plot = self.lane_stats_table()
         )
 
@@ -125,6 +139,7 @@ class MultiqcModule(BaseMultiqcModule):
             name = "Undetermined barcodes by lane",
             anchor = "undetermine_by_lane",
             description = "Count of the top twenty most abundant undetermined barcodes by lanes",
+            helptext="""When the sample `undetermied` has a signficant amount of reads we look for answers in this figure""",
             plot = bargraph.plot(
                 self.get_bar_data_from_undetermined(self.bcl2fastq_bylane),
                 None,

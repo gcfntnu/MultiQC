@@ -708,7 +708,7 @@ class MultiqcModule(BaseMultiqcModule):
             self.add_section (
                 name = 'Sequence Length Distribution',
                 anchor = 'fastqc_sequence_length_distribution',
-                description = '<div class="alert alert-info">{}</div>'.format(desc)
+                description = '<div class="alert alert-info">{}</div>'.format(desc),
                 helptext = '''
                 GCF will usually do no read trimming on the fastq files. If not otherwise specified by user 
                 this plot should show only reads at sequencing length.
