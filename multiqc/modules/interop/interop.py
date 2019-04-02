@@ -40,12 +40,18 @@ class MultiqcModule(BaseMultiqcModule):
                 name = 'Read Metrics Summary',
                 anchor = 'interop-runmetrics-summary',
                 description = 'Summary statistics for Total read count from each run.',
-                plot = self.run_metrics_summary_table(self.runSummary)
+                plot = self.run_metrics_summary_table(self.runSummary),
+                helptext = """These metrics are extracted from binary files produced by the sequencer machine during a run. This first table summarizes for all lanes.
+                The usual amount of phiX added by GCF (Aligned) is 1-10%. In some experimental setups (e.g low diversity) it may be up to 50%. The Q30 score is usually > 80%.
+                """
             )
             self.add_section (
                 name = 'Read Metrics per Lane',
                 anchor = 'interop-runmetrics-details',
-                plot = self.run_metrics_details_table(self.runSummary)
+                plot = self.run_metrics_details_table(self.runSummary),
+                helptext = """These metrics are extracted from binary files produced by the sequencer machine during a run. This first table summarizes per lane.
+                The usual amount of phiX added by GCF (Aligned) is 1-10%. In some experimental setups (e.g low diversity) it may be up to 50%. The Q30 score is usually > 80%.
+                """
             )
 
         if len(self.indexSummary) > 0:
