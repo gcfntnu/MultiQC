@@ -512,7 +512,25 @@ module_order:
             - RNA
             - DNA
             - methylation
+    - atropos:
+        phase: 'pre'
+        module_tag:
+            - RNA
+            - DNA
+            - methylation
     - flash:
         module_tag:
             - DNA
             - RNA
+    - atropos:
+        phase: 'trim'
+        module_tag:
+            - RNA
+            - DNA
+            - methylation
+    - atropos:
+        phase: 'post'
+        module_tag:
+            - RNA
+            - DNA
+            - methylation
