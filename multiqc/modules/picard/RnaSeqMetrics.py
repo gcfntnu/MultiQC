@@ -99,7 +99,7 @@ def parse_reports(self):
         GenStatsHeaders['PCT_RIBOSOMAL_BASES'] = {
             'title': '% rRNA',
             'description': 'Percent of aligned bases overlapping ribosomal RNA regions',
-            'max': 20,
+            'max': 15,
             'min': 0,
             'suffix': '%',
             'scale': 'Reds',

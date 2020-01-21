@@ -328,7 +328,7 @@ class MultiqcModule(BaseMultiqcModule):
         headers['pct_adapter'] = {
             'title': '% Adapter',
             'description': 'Percentage adapter-trimmed reads',
-            'max': 20,
+            'max': 15,
             'min': 0,
             'suffix': '%',
             'scale': 'RdYlGn-rev',
