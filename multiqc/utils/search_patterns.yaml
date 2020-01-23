@@ -254,6 +254,12 @@ fastqc/zip:
     fn: '*_fastqc.zip'
 fastqc/theoretical_gc:
     fn: '*fastqc_theoretical_gc*'
+fastqc_rnaseq/data:
+    fn: 'fastqc_data.txt'
+fastqc_rnaseq/zip:
+    fn: '*_fastqc.zip'
+fastqc_rnaseq/theoretical_gc:
+    fn: '*fastqc_theoretical_gc*'
 featurecounts:
     fn: '*.summary'
     shared: true

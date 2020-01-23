@@ -31,7 +31,7 @@ class MultiqcModule(BaseMultiqcModule):
     def __init__(self):
 
         # Initialise the parent object
-        super(MultiqcModule, self).__init__(name='FastQC-rnaseq', anchor='fastqc_rna-seq',
+        super(MultiqcModule, self).__init__(name='FastQC', anchor='fastqc_rnaseq',
         href="http://www.bioinformatics.babraham.ac.uk/projects/fastqc/",
         info="is a quality control tool for high throughput sequence data,"\
         " written by Simon Andrews at the Babraham Institute in Cambridge.")
@@ -39,12 +39,12 @@ class MultiqcModule(BaseMultiqcModule):
         self.fastqc_data = dict()
 
         # Find and parse unzipped FastQC reports
-        for f in self.find_log_files('fastqc/data'):
+        for f in self.find_log_files('fastqc_rnaseq/data'):
             s_name = self.clean_s_name(os.path.basename(f['root']), os.path.dirname(f['root']))
             self.parse_fastqc_report(f['f'], s_name, f)
 
         # Find and parse zipped FastQC reports
-        for f in self.find_log_files('fastqc/zip', filecontents=False):
+        for f in self.find_log_files('fastqc_rnaseq/zip', filecontents=False):
             s_name = f['fn']
             if s_name.endswith('_fastqc.zip'):
                 s_name = s_name[:-11]
@@ -554,7 +554,7 @@ class MultiqcModule(BaseMultiqcModule):
         theoretical_gc = None
         theoretical_gc_raw = None
         theoretical_gc_name = None
-        for f in self.find_log_files('fastqc/theoretical_gc'):
+        for f in self.find_log_files('fastqc_rnaseq/theoretical_gc'):
             if theoretical_gc_raw is not None:
                 log.warn("Multiple FastQC Theoretical GC Content files found, now using {}".format(f['fn']))
             theoretical_gc_raw = f['f']
