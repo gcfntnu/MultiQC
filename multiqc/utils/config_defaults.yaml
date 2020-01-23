@@ -493,6 +493,10 @@ module_order:
         module_tag:
             - RNA
             - DNA
+    - fastqc_rnaseq:
+        module_tag:
+            - RNA
+            - DNA
     - minionqc:
         module_tag:
             - DNA

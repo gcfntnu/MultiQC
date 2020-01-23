@@ -90,6 +90,7 @@ setup(
             'fastp = multiqc.modules.fastp:MultiqcModule',
             'fastq_screen = multiqc.modules.fastq_screen:MultiqcModule',
             'fastqc = multiqc.modules.fastqc:MultiqcModule',
+            'fastqc_rnaseq = multiqc.modules.fastqc_rnaseq:MultiqcModule',
             'featureCounts = multiqc.modules.featureCounts:MultiqcModule',
             'flash = multiqc.modules.flash:MultiqcModule',
             'flexbar = multiqc.modules.flexbar:MultiqcModule',
