@@ -116,7 +116,7 @@ def custom_module_classes():
                 if parsed_data is not None:
                     c_id = parsed_data.get('id', k)
                     if len(parsed_data.get('data', {})) > 0:
-                        if type(parsed_data['data']) == str:
+                        if type(parsed_data['data']) in (str, list):
                             cust_mods[c_id]['data'] = parsed_data['data']
                         else:
                             cust_mods[c_id]['data'].update( parsed_data['data'] )
