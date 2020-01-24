@@ -187,3 +187,4 @@ print("""
 For help in running MultiQC, please see the documentation available
 at http://multiqc.info or run: multiqc --help
 """)
+
