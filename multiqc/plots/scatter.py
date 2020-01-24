@@ -119,7 +119,24 @@ def highcharts_scatter_plot (plotdata, pconfig=None):
                 ymax = 'data-ymax="{}"'.format(pconfig['data_labels'][k]['ymax'])
             except:
                 ymax = ''
-            html += '<button class="btn btn-default btn-sm {a}" data-action="set_data" {y} {ym} data-newdata="{k}" data-target="{id}">{n}</button>\n'.format(a=active, id=pconfig['id'], n=name, y=ylab, ym=ymax, k=k)
+            try:
+                xlab = 'data-xlab="{}"'.format(pconfig["data_labels"][k]["xlab"])
+            except:
+                xlab = 'data-xlab="{}"'.format(name) if name != k + 1 else ""
+            try:
+                xmax = 'data-xmax="{}"'.format(pconfig["data_labels"][k]["xmax"])
+            except:
+                xmax = ""
+            html += '<button class="btn btn-default btn-sm {a}" data-action="set_data" {y} {ym} {x} {xm} data-newdata="{k}" data-target="{id}">{n}</button>\n'.format(
+                a=active,
+                id=pconfig["id"],
+                n=name,
+                y=ylab,
+                ym=ymax,
+                k=k,
+                x=xlab,
+                xm=xmax
+            )
         html += '</div>\n\n'
 
     # The plot div

@@ -18,19 +18,6 @@ from multiqc.plots import table, bargraph, linegraph, scatter, heatmap, beeswarm
 # Initialise the logger
 log = logging.getLogger(__name__)
 
-# Load YAML as an ordered dict
-# From https://stackoverflow.com/a/21912744
-def yaml_ordered_load(stream):
-    class OrderedLoader(yaml.SafeLoader):
-        pass
-    def construct_mapping(loader, node):
-        loader.flatten_mapping(node)
-        return OrderedDict(loader.construct_pairs(node))
-    OrderedLoader.add_constructor(
-        yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
-        construct_mapping)
-    return yaml.load(stream, OrderedLoader)
-
 def custom_module_classes():
     """
     MultiQC Custom Content class. This module does a lot of different
@@ -89,7 +76,12 @@ def custom_module_classes():
                 parsed_data = None
                 if f_extension == '.yaml' or f_extension == '.yml':
                     try:
-                        parsed_data = yaml_ordered_load(f['f'])
+                        # Parsing as OrderedDict is slightly messier with YAML
+                        # http://stackoverflow.com/a/21048064/713980
+                        def dict_constructor(loader, node):
+                            return OrderedDict(loader.construct_pairs(node))
+                        yaml.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, dict_constructor)
+                        parsed_data = yaml.load(f['f'])
                     except Exception as e:
                         log.warning("Error parsing YAML file '{}' (probably invalid YAML)".format(f['fn']))
                         log.warning("YAML error: {}".format(e))
@@ -116,7 +108,7 @@ def custom_module_classes():
                 if parsed_data is not None:
                     c_id = parsed_data.get('id', k)
                     if len(parsed_data.get('data', {})) > 0:
-                        if type(parsed_data['data']) == str:
+                        if type(parsed_data['data']) in (str, list):
                             cust_mods[c_id]['data'] = parsed_data['data']
                         else:
                             cust_mods[c_id]['data'].update( parsed_data['data'] )
@@ -199,7 +191,7 @@ def custom_module_classes():
 
     # Go through each data type
     parsed_modules = list()
-    for module_id, mod in cust_mods.items():
+    for k, mod in cust_mods.items():
 
         # General Stats
         if mod['config'].get('plot_type') == 'generalstats':
@@ -216,33 +208,33 @@ def custom_module_classes():
 
             # Headers is a list of dicts
             if type(gsheaders) == list:
-                gsheaders_dict = OrderedDict()
-                for gsheader in gsheaders:
-                    for col_id, col_data in gsheader.items():
-                        gsheaders_dict[col_id] = col_data
-                gsheaders = gsheaders_dict
+                hs = OrderedDict()
+                for h in gsheaders:
+                    for k, v in h.items():
+                        hs[k] = v
+                gsheaders = hs
 
             # Add namespace and description if not specified
-            for m_id in gsheaders:
-                if 'namespace' not in gsheaders[m_id]:
-                    gsheaders[m_id]['namespace'] = mod['config'].get('namespace', module_id)
+            for h in gsheaders:
+                if 'namespace' not in gsheaders[h]:
+                    gsheaders[h]['namespace'] = mod['config'].get('namespace', k)
 
             bm.general_stats_addcols(mod['data'], gsheaders)
 
         # Initialise this new module class and append to list
         else:
-            parsed_modules.append( MultiqcModule(module_id, mod) )
+            parsed_modules.append( MultiqcModule(k, mod) )
             if mod['config'].get('plot_type') == 'html':
-                log.info("{}: Found 1 sample (html)".format(module_id))
+                log.info("{}: Found 1 sample (html)".format(k))
             if mod['config'].get('plot_type') == 'image':
-                log.info("{}: Found 1 sample (image)".format(module_id))
+                log.info("{}: Found 1 sample (image)".format(k))
             else:
-                log.info("{}: Found {} samples ({})".format(module_id, len(mod['data']), mod['config'].get('plot_type')))
+                log.info("{}: Found {} samples ({})".format(k, len(mod['data']), mod['config'].get('plot_type')))
 
     # Sort sections if we have a config option for order
     mod_order = getattr(config, 'custom_content', {}).get('order', [])
-    sorted_modules = [parsed_mod for parsed_mod in parsed_modules if parsed_mod.anchor not in mod_order ]
-    sorted_modules.extend([parsed_mod for mod_id in mod_order for parsed_mod in parsed_modules if parsed_mod.anchor == mod_id ])
+    sorted_modules = [m for m in parsed_modules if m.anchor not in mod_order ]
+    sorted_modules.extend([m for k in mod_order for m in parsed_modules if m.anchor == k ])
 
     # If we only have General Stats columns then there are no module outputs
     if len(sorted_modules) == 0:
@@ -326,7 +318,7 @@ def _find_file_header(f):
         return None
     hconfig = None
     try:
-        hconfig = yaml.safe_load("\n".join(hlines))
+        hconfig = yaml.load("\n".join(hlines))
         assert(isinstance(hconfig, dict))
     except yaml.YAMLError as e:
         log.warn("Could not parse comment file header for MultiQC custom content: {}".format(f['fn']))
