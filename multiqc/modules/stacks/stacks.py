@@ -7,7 +7,6 @@ from collections import OrderedDict
 import logging
 import re
 import os
-from multiqc import config
 from multiqc.plots import table, linegraph
 from multiqc.modules.base_module import BaseMultiqcModule
 
@@ -249,14 +248,14 @@ class MultiqcModule(BaseMultiqcModule):
         var_lines = fl[fl.index("# Variant positions")+1:fl.index("# All positions (variant and fixed)")]
         headers = None
         for l in var_lines:
-            if l.startswith("# Pop ID"):
+            if l.startswith("# Pop ID	Private	Num_Indv"):
                 headers = l.split("\t")
             elif headers is not None:
                 cdict = OrderedDict()
                 content = l.split("\t")
                 for i in fields:
                     cdict[headers[i]] = content[i]
-                out_dict[s_name] = cdict
+                out_dict[s_name + " | "+ content[0]] = cdict
 
         return out_dict
 

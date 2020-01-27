@@ -8,7 +8,8 @@
 [![PyPI Version](https://img.shields.io/pypi/v/multiqc.svg?style=flat-square)](https://pypi.python.org/pypi/multiqc/)
 [![Conda Version](https://anaconda.org/bioconda/multiqc/badges/version.svg)](https://anaconda.org/bioconda/multiqc)
 [![Docker](https://img.shields.io/docker/automated/ewels/multiqc.svg?style=flat-square)](https://hub.docker.com/r/ewels/multiqc/)
-[![Build Status](https://img.shields.io/travis/ewels/MultiQC.svg?style=flat-square)](https://travis-ci.org/ewels/MultiQC)
+[![GitHub Workflow Status - Linux](https://img.shields.io/github/workflow/status/ewels/MultiQC/MultiQC%20-%20Linux?label=build%20-%20Linux&logo=ubuntu&logoColor=white&style=flat-square)](https://github.com/ewels/MultiQC/actions?query=workflow%3A%22MultiQC+-+Linux%22)
+[![GitHub Workflow Status - Windows](https://img.shields.io/github/workflow/status/ewels/MultiQC/MultiQC%20-%20Windows?label=build%20-%20Windows&logo=windows&style=flat-square)](https://github.com/ewels/MultiQC/actions?query=workflow%3A%22MultiQC+-+Windows%22)
 
 [![Gitter](https://img.shields.io/badge/gitter-%20join%20chat%20%E2%86%92-4fb99a.svg?style=flat-square)](https://gitter.im/ewels/MultiQC)
 [![DOI](https://img.shields.io/badge/DOI-10.1093%2Fbioinformatics%2Fbtw354-lightgrey.svg?style=flat-square)](http://dx.doi.org/10.1093/bioinformatics/btw354)
@@ -44,16 +45,18 @@ Currently, supported tools include:
 |[leeHom][leehom]                 |[Kallisto][kallisto]     |[RSEM][rsem]                 |[HiCExplorer][hicexplorer]            |
 |[InterOp][interop]               |[Long Ranger][longranger]|[Samblaster][samblaster]     |[methylQA][methylqa]                  |
 |[FastQC][fastqc]                 |[Salmon][salmon]         |[Samtools][samtools]         |[miRTrace][mirtrace]                  |
-|[FastQ Screen][fastq-screen]     |[Slamdunk][slamdunk]     |[SnpEff][snpeff]             |[Peddy][peddy]                        |
-|[Fastp][fastp]                   |[STAR][star]             |[Subread featureCounts][featurecounts]|[phantompeakqualtools][phantompeakqualtools]|
-|[FLASh][flash]                   |[Tophat][tophat]         |[Stacks][stacks]             |[Preseq][preseq]                      |
-|[Flexbar][flexbar]               |                         |[THetA2][theta2]             |[QoRTs][qorts]                        |
+|[FastQ Screen][fastq-screen]     |[Slamdunk][slamdunk]     |[SnpEff][snpeff]             |[mosdepth][mosdepth]                  |
+|[Fastp][fastp]                   |[STAR][star]             |[Subread featureCounts][featurecounts]|[Peddy][peddy]               |
+|[fgbio][fgbio]                   |[Tophat][tophat]         |[Stacks][stacks]             |[phantompeakqualtools][phantompeakqualtools]|
+|[FLASh][flash]                   |                         |[THetA2][theta2]             |[Preseq][preseq]                      |
+|[Flexbar][flexbar]               |                         |                             |[QoRTs][qorts]                        |
 |[Jellyfish][jellyfish]           |                         |                             |[Qualimap][qualimap]                  |
 |[KAT][kat]                       |                         |                             |[QUAST][quast]                        |
 |[MinIONQC][minionqc]             |                         |                             |[RNA-SeQC][rna_seqc]                  |
 |[Skewer][skewer]                 |                         |                             |[RSeQC][rseqc]                        |
 |[SortMeRNA][sortmerna]           |                         |                             |[Sargasso][sargasso]                  |
-|[Trimmomatic][trimmomatic]       |                         |                             |[Supernova][supernova]                |
+|[SeqyClean][seqyclean]           |                         |                             |[Sex.DetERRmine][sexdeterrmine]       |
+|                                 |                         |                             |[Supernova][supernova]                |
 |                                 |                         |                             |[VCFTools][vcftools]                  |
 |                                 |                         |                             |[VerifyBAMID][verifybamid]            |
 
@@ -160,6 +163,7 @@ Code contributions from:
 [@chuan-wang](https://github.com/chuan-wang),
 [@cpavanrun](https://github.com/cpavanrun),
 [@dakl](https://github.com/dakl),
+[@elizabethcook21](https://github.com/elizabethcook21),
 [@ehsueh](https://github.com/ehsueh),
 [@epruesse](https://github.com/epruesse),
 [@florianduclot](https://github.com/florianduclot/),
@@ -180,6 +184,7 @@ Code contributions from:
 [@robinandeer](https://github.com/robinandeer),
 [@Rotholandus](https://github.com/Rotholandus),
 [@sachalau](https://github.com/sachalau/),
+[@smeds](https://github.com/smeds/),
 [@t-neumann](https://github.com/t-neumann),
 [@vladsaveliev](https://github.com/vladsaveliev),
 [@winni2k](https://github.com/winni2k),
@@ -215,6 +220,7 @@ MultiQC is released under the GPL v3 or later licence.
 [fastqc]:         http://multiqc.info/docs/#fastqc
 [fastp]:          http://multiqc.info/docs/#fastp
 [featurecounts]:  http://multiqc.info/docs/#featurecounts
+[fgbio]:          http://multiqc.info/docs/#fgbio
 [flash]:          http://multiqc.info/docs/#flash
 [flexbar]:        http://multiqc.info/docs/#flexbar
 [gatk]:           http://multiqc.info/docs/#gatk
@@ -235,6 +241,7 @@ MultiQC is released under the GPL v3 or later licence.
 [methylqa]:       http://multiqc.info/docs/#methylqa
 [minionqc]:       http://multiqc.info/docs/#minionqc
 [mirtrace]:       http://multiqc.info/docs/#mirtrace
+[mosdepth]:       http://multiqc.info/docs/#mosdepth
 [peddy]:          http://multiqc.info/docs/#peddy
 [phantompeakqualtools]: http://multiqc.info/docs/#phantompeakqualtools
 [picard]:         http://multiqc.info/docs/#picard
@@ -250,6 +257,8 @@ MultiQC is released under the GPL v3 or later licence.
 [samblaster]:     http://multiqc.info/docs/#samblaster
 [samtools]:       http://multiqc.info/docs/#samtools
 [sargasso]:       http://multiqc.info/docs/#sargasso
+[seqyclean]:      http://multiqc.info/docs/#seqyclean
+[sexdeterrmine]:  http://multiqc.info/docs/#sex.deterrmine
 [skewer]:         http://multiqc.info/docs/#skewer
 [slamdunk]:       http://multiqc.info/docs/#slamdunk
 [snpeff]:         http://multiqc.info/docs/#snpeff
