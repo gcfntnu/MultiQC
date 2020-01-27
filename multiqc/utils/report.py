@@ -133,7 +133,7 @@ def get_filelist(run_module_names):
         for patterns in spatterns:
             for key, sps in patterns.items():
                 for sp in sps:
-                    if search_file (sp, f):
+                    if search_file (sp, f, key):
                         # Check that we shouldn't exclude this file
                         if not exclude_file(sp, f):
                             # Looks good! Remember this file
@@ -146,6 +146,7 @@ def get_filelist(run_module_names):
                             break
 
     # Go through the analysis directories and get file list
+    multiqc_installation_dir_files = ['LICENSE', 'CHANGELOG.md', 'Dockerfile', 'MANIFEST.in', '.gitmodules', 'README.md', 'CSP.txt', 'setup.py', '.gitignore']
     for path in config.analysis_dir:
         if os.path.islink(path) and config.ignore_symlinks:
             continue
@@ -178,6 +179,15 @@ def get_filelist(run_module_names):
                 if len(p_matches) > 0:
                     logger.debug("Ignoring directory as matched fn_ignore_paths: {}".format(root))
                     continue
+
+                # Sanity check - make sure that we're not just running in the installation directory
+                if len(filenames) > 0 and all([fn in filenames for fn in multiqc_installation_dir_files]):
+                    logger.error("Error: MultiQC is running in source code directory! {}".format(root))
+                    logger.warn("Please see the docs for how to use MultiQC: https://multiqc.info/docs/#running-multiqc")
+                    dirnames[:] = []
+                    filenames[:] = []
+                    continue
+
                 # Search filenames in this directory
                 for fn in filenames:
                     searchfiles.append([fn, root])
@@ -186,7 +196,7 @@ def get_filelist(run_module_names):
         for sf in sfiles:
             add_file(sf[0], sf[1])
 
-def search_file (pattern, f):
+def search_file (pattern, f, module_key):
     """
     Function to searach a single file for a single search pattern.
     """
@@ -195,7 +205,7 @@ def search_file (pattern, f):
     contents_matched = False
 
     # Use mimetypes to exclude binary files where possible
-    if not re.match(r'.+_mqc\.(png|jpg|jpeg)', f['fn']):
+    if not re.match(r'.+_mqc\.(png|jpg|jpeg)', f['fn']) and config.ignore_images:
         (ftype, encoding) = mimetypes.guess_type(os.path.join(f['root'], f['fn']))
         if encoding is not None:
             return False
@@ -205,7 +215,7 @@ def search_file (pattern, f):
     # Search pattern specific filesize limit
     if pattern.get('max_filesize') is not None and 'filesize' in f:
         if f['filesize'] > pattern.get('max_filesize'):
-            logger.debug("Ignoring because exceeded search pattern filesize limit: {}".format(f['fn']))
+            logger.debug("File ignored by {} because it exceeded search pattern filesize limit: {}".format(module_key, f['fn']))
             return False
 
     # Search by file name (glob)
