@@ -79,10 +79,9 @@ class MultiqcModule(BaseMultiqcModule):
             'shared_key': 'read_count',
         }
         headers['gem_count_estimate'] = {
-            'title': '{} GEM'.format(config.read_count_prefix),
-            'description': 'GEM count estimate ({})'.format(config.read_count_desc),
+            'title': 'GEM estimate',
+            'description': 'GEM count estimate',
             'min': 0,
-            'modify': lambda x: x * config.read_count_multiplier,
             'scale': 'GnBu',
             'shared_key': 'read_count',
         }
