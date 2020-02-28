@@ -78,16 +78,17 @@ class MultiqcModule(BaseMultiqcModule):
             'scale': 'GnBu',
             'shared_key': 'read_count',
         }
-        headers['gem_count_estimate'] = {
-            'title': 'GEM estimate',
-            'description': 'GEM count estimate',
-            'min': 0,
-            'scale': 'GnBu',
-            'shared_key': 'read_count',
-        }
+        if 'gem_count_estimate' in self.cellranger_data[list(self.cellranger_data.keys())[0]].keys():
+            headers['gem_count_estimate'] = {
+                'title': 'GEM estimate',
+                'description': 'GEM count estimate',
+                'format': '{:n}',
+                'min': 0,
+                'scale': 'GnBu',
+            }
         headers['barcode_exact_match_ratio'] = {
             'title': 'Ratio perfect BC',
-            'description': 'Ratio of perfectmatch for barcodes',
+            'description': 'Ratio of perfect match for barcodes',
             'min': 0,
             'max': 100,
             'modify': lambda x: x * 100.0,
