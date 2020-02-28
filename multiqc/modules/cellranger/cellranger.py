@@ -127,5 +127,5 @@ class MultiqcModule(BaseMultiqcModule):
             'suffix': '%',
         }
 
-        self.general_stats_addcols(self.fastp_data, headers)
+        self.general_stats_addcols(self.cellranger_data, headers)
 
