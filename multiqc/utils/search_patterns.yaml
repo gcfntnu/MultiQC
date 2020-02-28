@@ -2,8 +2,6 @@
 # Default configurations for how modules can find their log files.
 # Loaded by the config module so that these patterns can be overwritten in user config files.
 
-cellranger:
-    fn: 'qc_summary.json'
 adapterRemoval:
     fn: '*.settings'
     contents: 'AdapterRemoval'
@@ -187,6 +185,9 @@ busco:
     fn: 'short_summary_*'
     contents: 'BUSCO version is:'
     num_lines: 1
+cellranger:
+    fn: 'qc_summary.json'
+    contents: '10x_software_version'
 custom_content:
     fn_re: '.+_mqc\.(yaml|yml|json|txt|csv|tsv|log|out|png|jpg|jpeg)'
 clipandmerge:
