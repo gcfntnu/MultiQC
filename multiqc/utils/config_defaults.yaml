@@ -452,6 +452,10 @@ module_order:
             - RNA
 
     # Pre-alignment QC
+    - cellranger:
+        module_tag:
+            - RNA
+            - DNA
     - kat:
         module_tag:
             - DNA
