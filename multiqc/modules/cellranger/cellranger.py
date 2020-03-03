@@ -117,7 +117,7 @@ class MultiqcModule(BaseMultiqcModule):
             'suffix': '%',
             'scale': 'RdYlGn-rev'
         }
-	headers['bc_on_whitelist'] = {
+        headers['bc_on_whitelist'] = {
             'title': 'BC on whitelist',
             'description': 'Percentage of barcodes on whitelist',
             'min': 0,
@@ -126,7 +126,7 @@ class MultiqcModule(BaseMultiqcModule):
             'format': '{:,.1f}',
             'suffix': '%',
             'scale': 'RdYlGn-rev'
-            }
+        }
         headers['barcode_q30_base_ratio'] = {
             'title': 'BC % > Q30',
             'description': 'Percentage of barcode reads > Q30',
