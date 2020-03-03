@@ -8,7 +8,7 @@ import logging
 import json
 
 from multiqc import config
-from multiqc.plots import bargraph, linegraph
+from multiqc.plots import bargraph, linegraph, table
 from multiqc.modules.base_module import BaseMultiqcModule
 
 # Initialise the logger
@@ -45,8 +45,28 @@ class MultiqcModule(BaseMultiqcModule):
         ## Parse whole JSON to save all its content
         self.write_data_file(self.cellranger_data, 'multiqc_cellranger')
 
+
+
         # General Stats Table
         self.cellranger_general_stats_table()
+
+        self.add_section(
+            name = "cellranger mkfastq QC",
+            anchor = "cellranger-mkfastq-qc",
+            description = "metrics from 10X genomics mkfastq pipeline",
+            plot = table.plot(self.cellranger_data, self.cellranger_qc_headers, {})
+        )
+
+
+    def modify_sample_metrics(sample_metrics):
+        for k, v in sample_metrics.items():
+            if k in ['number_reads', 'gem_count_estimate']:
+                sample_metrics[k] = int(v)
+            elif k in ['barcode_exact_match_ratio', 'barcode_q30_base_ratio', 'read1_q30_base_ratio', 'read2_q30_base_ratio', 'bc_on_whitelist']:
+                sample_metrics[k] = round(float(v)*100.0,2)
+            elif k == 'mean_barcode_qscore':
+                sample_metrics[k] = round(float(v),2)
+        return sample_metrics
 
 
     def parse_cellranger_log(self, f):
@@ -106,6 +126,13 @@ class MultiqcModule(BaseMultiqcModule):
             'scale': 'GnBu',
             'suffix': '%',
         }
+        headers['mean_barcode_qscore'] =  {
+            'title': 'BC qscore',
+            'description': 'Mean barcode Q score',
+            'format': '{:,.1f}',
+            'min': 0,
+            'scale': 'GnBu'
+        }
         headers['read1_q30_base_ratio'] = {
             'title': 'R1 % > Q30',
             'description': 'Percentage of R1 reads > Q30',
@@ -126,6 +153,6 @@ class MultiqcModule(BaseMultiqcModule):
             'scale': 'GnBu',
             'suffix': '%',
         }
-
-        self.general_stats_addcols(self.cellranger_data, headers)
+        self.cellranger_qc_headers = headers
+        #self.general_stats_addcols(self.cellranger_data, headers)
 
