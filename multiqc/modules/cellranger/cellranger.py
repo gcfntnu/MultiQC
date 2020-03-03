@@ -105,6 +105,7 @@ class MultiqcModule(BaseMultiqcModule):
                 'modify': lambda x: x * config.read_count_multiplier,
                 'min': 0,
                 'scale': 'GnBu',
+                'shared_key': 'read_count',
             }
         headers['barcode_exact_match_ratio'] = {
             'title': 'Ratio perfect BC',
