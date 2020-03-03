@@ -48,7 +48,7 @@ class MultiqcModule(BaseMultiqcModule):
 
 
         # General Stats Table
-        self.cellranger_general_stats_table()
+        self.cellranger_set_table_headers()
 
         self.add_section(
             name = "cellranger mkfastq QC",
@@ -85,7 +85,7 @@ class MultiqcModule(BaseMultiqcModule):
         # Don't delete dicts with subkeys, messes up multi-panel plots
 
 
-    def cellranger_general_stats_table(self):
+    def cellranger_set_table_headers(self):
         """ Take the parsed stats from the cellranger report and add it to the
         General Statistics table at the top of the report """
 
@@ -100,9 +100,9 @@ class MultiqcModule(BaseMultiqcModule):
         }
         if 'gem_count_estimate' in self.cellranger_data[list(self.cellranger_data.keys())[0]].keys():
             headers['gem_count_estimate'] = {
-                'title': 'GEM estimate',
-                'description': 'GEM count estimate',
-                'format': '{:n}',
+                'title': '{} GEM estimate'.format(config.read_count_prefix),
+                'description': 'GEM count estimate ({})'.format(config.read_count_desc),
+                'modify': lambda x: x * config.read_count_multiplier,
                 'min': 0,
                 'scale': 'GnBu',
             }
