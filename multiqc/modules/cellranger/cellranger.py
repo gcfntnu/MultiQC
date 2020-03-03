@@ -117,6 +117,16 @@ class MultiqcModule(BaseMultiqcModule):
             'suffix': '%',
             'scale': 'RdYlGn-rev'
         }
+	headers['bc_on_whitelist'] = {
+            'title': 'BC on whitelist',
+            'description': 'Percentage of barcodes on whitelist',
+            'min': 0,
+            'max': 100,
+            'modify': lambda x: x * 100.0,
+            'format': '{:,.1f}',
+            'suffix': '%',
+            'scale': 'RdYlGn-rev'
+            }
         headers['barcode_q30_base_ratio'] = {
             'title': 'BC % > Q30',
             'description': 'Percentage of barcode reads > Q30',
@@ -128,7 +138,7 @@ class MultiqcModule(BaseMultiqcModule):
             'suffix': '%',
         }
         headers['mean_barcode_qscore'] =  {
-            'title': 'BC qscore',
+            'title': 'BC Qscore',
             'description': 'Mean barcode Q score',
             'format': '{:,.1f}',
             'min': 0,
