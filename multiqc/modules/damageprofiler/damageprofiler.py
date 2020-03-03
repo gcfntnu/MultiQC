@@ -7,7 +7,6 @@ from collections import OrderedDict
 import logging
 import json
 
-from multiqc import config
 from multiqc.plots import  linegraph
 from multiqc.modules.base_module import BaseMultiqcModule
 
@@ -48,6 +47,9 @@ class MultiqcModule(BaseMultiqcModule):
 
         if len(self.summary_metrics_data) == 0:
             raise UserWarning
+        
+        # Write parsed report data to a file
+        self.write_data_file(self.summary_metrics_data, 'multiqc_damageprofiler_metrics')
 
         # Basic Stats Table, use generic function to add data to general table
         self.dmgprof_misinc_stats(self.threepGtoAfreq_data, '3 Prime', 'G>A')
@@ -90,6 +92,8 @@ class MultiqcModule(BaseMultiqcModule):
                 ''',
                 plot = self.lgdistplot(self.lgdist_rv_data, 'Reverse')
             )
+        
+
 
 
     #Parse our nice little JSON file

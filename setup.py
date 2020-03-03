@@ -24,7 +24,7 @@ MultiQC was written by Phil Ewels (http://phil.ewels.co.uk) at SciLifeLab Sweden
 from setuptools import setup, find_packages
 import sys
 
-version = '1.8dev'
+version = '1.9dev'
 dl_version = 'master' if 'dev' in version else 'v{}'.format(version)
 
 print("""-----------------------------------
@@ -33,18 +33,37 @@ print("""-----------------------------------
 
 """.format(version))
 
+# Set version requirements according to what version of Python we're running
+networkx_version = ''
+numpy_version = ''
+matplotlib_version = '>=2.1.1'
+if sys.version_info[0:2] < (3, 6):
+    # MatPlotLib v3 dropped Python 2 support. Version 3.1 onwards only supports Python 3.5+
+    matplotlib_version += ',<3.0.0'
+    # Numpy v1.17 dropped Python 2 and Python 3.4 support
+    numpy_version = '<1.17'
+    networkx_version = '<2.3'
+else:
+    # Unlike pip, setuptools install_requires will install pre-releases!
+    # Matplotlib often ships these and they very often break
+    # Pinning a maximum version prevents this, but can make dependency management more difficult, sorry!
+    # See: https://github.com/pypa/setuptools/issues/855
+    matplotlib_version += ',<3.1.2'
+
 install_requires = [
+        'matplotlib' + matplotlib_version,
+        'networkx' + networkx_version,
+        'numpy' + numpy_version,
         'click',
+        'coloredlogs',
         'future>0.14.0',
-        'lzstring',
         'jinja2>=2.9',
-        'matplotlib>=2.1.1,<3.0.0',
+        'lzstring',
         'markdown',
-        'numpy',
         'pyyaml>=4',
         'requests',
         'simplejson',
-        'spectra>=0.0.10'
+        'spectra>=0.0.10',
     ]
 
 setup(
@@ -61,9 +80,11 @@ setup(
     packages = find_packages(),
     include_package_data = True,
     zip_safe = False,
-    scripts = ['scripts/multiqc'],
     install_requires = install_requires,
     entry_points = {
+        "console_scripts": [
+            "multiqc=multiqc.__main__:multiqc",
+        ],
         'multiqc.modules.v1': [
             'adapterRemoval = multiqc.modules.adapterRemoval:MultiqcModule',
             'afterqc = multiqc.modules.afterqc:MultiqcModule',
@@ -78,6 +99,7 @@ setup(
             'bowtie1 = multiqc.modules.bowtie1:MultiqcModule',
             'bowtie2 = multiqc.modules.bowtie2:MultiqcModule',
             'busco = multiqc.modules.busco:MultiqcModule',
+            'cellranger = multiqc.modules.cellranger:MultiqcModule',
             'clipandmerge = multiqc.modules.clipandmerge:MultiqcModule',
             'clusterflow = multiqc.modules.clusterflow:MultiqcModule',
             'conpair = multiqc.modules.conpair:MultiqcModule',
@@ -92,6 +114,7 @@ setup(
             'fastqc = multiqc.modules.fastqc:MultiqcModule',
             'fastqc_rnaseq = multiqc.modules.fastqc_rnaseq:MultiqcModule',
             'featureCounts = multiqc.modules.featureCounts:MultiqcModule',
+            'fgbio = multiqc.modules.fgbio:MultiqcModule',
             'flash = multiqc.modules.flash:MultiqcModule',
             'flexbar = multiqc.modules.flexbar:MultiqcModule',
             'gatk = multiqc.modules.gatk:MultiqcModule',
@@ -113,6 +136,8 @@ setup(
             'methylQA = multiqc.modules.methylQA:MultiqcModule',
             'mirtrace = multiqc.modules.mirtrace:MultiqcModule',
             'minionqc = multiqc.modules.minionqc:MultiqcModule',
+            'mosdepth = multiqc.modules.mosdepth:MultiqcModule',
+            'mtnucratio = multiqc.modules.mtnucratio:MultiqcModule',
             'peddy = multiqc.modules.peddy:MultiqcModule',
             'phantompeakqualtools = multiqc.modules.phantompeakqualtools:MultiqcModule',
             'picard = multiqc.modules.picard:MultiqcModule',
@@ -128,6 +153,8 @@ setup(
             'samblaster = multiqc.modules.samblaster:MultiqcModule',
             'samtools = multiqc.modules.samtools:MultiqcModule',
             'sargasso = multiqc.modules.sargasso:MultiqcModule',
+            'seqyclean = multiqc.modules.seqyclean:MultiqcModule',
+            'sexdeterrmine = multiqc.modules.sexdeterrmine:MultiqcModule',
             'skewer = multiqc.modules.skewer:MultiqcModule',
             'slamdunk = multiqc.modules.slamdunk:MultiqcModule',
             'snpeff = multiqc.modules.snpeff:MultiqcModule',
@@ -187,3 +214,4 @@ print("""
 For help in running MultiQC, please see the documentation available
 at http://multiqc.info or run: multiqc --help
 """)
+

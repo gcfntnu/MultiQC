@@ -79,6 +79,7 @@ lint: False
 custom_plot_config: {}
 
 ignore_symlinks: false
+ignore_images: true
 fn_ignore_dirs:
     - 'multiqc_data'
     - 'icarus_viewers'       # quast
@@ -185,6 +186,7 @@ fn_clean_exts:
     - '.rpkm'
     - '.selfSM'
     - '.extendedFrags'
+    - '_SummaryStatistics'
 
 # These are removed after the above, only if sample names
 # start or end with this string. Again, removed in order.
@@ -344,6 +346,11 @@ module_order:
         module_tag:
             - DNA
             - RNA
+    - fgbio:
+        module_tag:
+            - DNA
+            - RNA
+            - umi
     - dedup:
         module_tag:
             - DNA
@@ -356,6 +363,10 @@ module_order:
         module_tag:
             - DNA
             - RNA
+    - mtnucratio:
+        module_tag:
+            - DNA
+            - ancient
     - picard:
         module_tag:
             - DNA
@@ -372,6 +383,9 @@ module_order:
         module_tag:
             - DNA
             - RNA
+    - sexdeterrmine:
+        module_tag:
+            - DNA
     - bamtools:
         module_tag:
             - DNA
@@ -438,6 +452,10 @@ module_order:
             - RNA
 
     # Pre-alignment QC
+    - cellranger:
+        module_tag:
+            - RNA
+            - DNA
     - kat:
         module_tag:
             - DNA
@@ -501,6 +519,10 @@ module_order:
         module_tag:
             - DNA
             - RNA
+    - mosdepth:
+        module_tag:
+            - DNA
+            - RNA
     - clusterflow:
         module_tag:
             - RNA
@@ -517,6 +539,11 @@ module_order:
             - DNA
             - methylation
     - flash:
+        module_tag:
+            - DNA
+            - RNA
+
+    - seqyclean:
         module_tag:
             - DNA
             - RNA

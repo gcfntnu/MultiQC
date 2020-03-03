@@ -1,15 +1,12 @@
 #!/usr/bin/env python
 from __future__ import print_function
 import logging
-import re
-from itertools import chain
 from collections import OrderedDict
 
-from multiqc import config
-from multiqc.plots import linegraph, bargraph, scatter, table, heatmap, beeswarm
+from multiqc.plots import table
 from multiqc.modules.base_module import BaseMultiqcModule
 
-from .bbmap_filetypes import section_order, file_types, statsfile_machine_keys
+from .bbmap_filetypes import file_types, section_order
 
 """ MultiQC module to parse output from BBMap """
 
@@ -91,8 +88,11 @@ class MultiqcModule(BaseMultiqcModule):
         data = {}
         for line_number, line in enumerate(f, start=1):
             line = line.strip().split('\t')
-            if line[0][0] == '#':
-                # It's a header row
+            try:
+                header_row = line[0][0] == '#'
+            except IndexError:
+                continue  # The table is probably empty
+            if header_row:
                 line[0] = line[0][1:] # remove leading '#'
 
                 if line[0] != cols[0]:
@@ -131,6 +131,10 @@ class MultiqcModule(BaseMultiqcModule):
                 else:
                     line = list(map(int, line))
                 data[line[0]] = line[1:]
+
+        if not data:
+            log.warning("File %s appears to contain no data for plotting, ignoring...", fn)
+            return False
 
         if s_name in self.mod_data[file_type]:
             log.debug("Duplicate sample name found! Overwriting: %s", s_name)

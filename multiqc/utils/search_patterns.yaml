@@ -12,7 +12,7 @@ afterqc:
 bamtools/stats:
     contents: 'Stats for BAM file(s):'
     shared: true
-    num_lines: 2
+    num_lines: 10
 bbmap/stats:
     contents: '#Name	Reads	ReadsPct'
     num_lines: 4
@@ -185,6 +185,9 @@ busco:
     fn: 'short_summary_*'
     contents: 'BUSCO version is:'
     num_lines: 1
+cellranger:
+    fn: 'qc_summary.json'
+    contents: '10x_software_version'
 custom_content:
     fn_re: '.+_mqc\.(yaml|yml|json|txt|csv|tsv|log|out|png|jpg|jpeg)'
 clipandmerge:
@@ -210,7 +213,7 @@ cutadapt:
 damageprofiler:
     fn: '*dmgprof.json'
 dedup:
-    fn: 'dedup.log'
+    fn: '*dedup.json'
 deeptools/bamPEFragmentSizeTable:
     contents: '	Frag. Sampled	Frag. Len. Min.	Frag. Len. 1st. Qu.	Frag. Len. Mean	Frag. Len. Median	Frag. Len. 3rd Qu.'
     num_lines: 1
@@ -263,6 +266,9 @@ fastqc_rnaseq/theoretical_gc:
 featurecounts:
     fn: '*.summary'
     shared: true
+fgbio/groupreadsbyumi:
+    contents: 'fraction_gt_or_eq_family_size'
+    num_lines: 1
 flash/log:
     contents: '[FLASH]'
     shared: true
@@ -358,6 +364,12 @@ mirtrace/contaminationbasic:
     fn: 'mirtrace-stats-contamination_basic.tsv'
 mirtrace/mirnacomplexity:
     fn: 'mirtrace-stats-mirna-complexity.tsv'
+mtnucratio:
+    fn: '*mtnuc.json'
+mosdepth/global_dist:
+    fn: '*.mosdepth.global.dist.txt'
+mosdepth/region_dist:
+    fn: '*.mosdepth.region.dist.txt'
 disambiguate:
     contents: 'unique species A pairs'
     num_lines: 2
@@ -495,6 +507,10 @@ samtools/rmdup:
     shared: true
 sargasso:
     fn: 'overall_filtering_summary.txt'
+seqyclean:
+    fn: '*_SummaryStatistics.tsv'
+sexdeterrmine:
+    fn: 'sexdeterrmine.json'
 skewer:
     contents: 'maximum error ratio allowed (-r):'
     shared: true
