@@ -51,9 +51,9 @@ class MultiqcModule(BaseMultiqcModule):
         self.cellranger_set_table_headers()
 
         self.add_section(
-            name = "cellranger mkfastq QC",
+            name = "10X genomics mkfastq",
             anchor = "cellranger-mkfastq-qc",
-            description = "metrics from 10X genomics mkfastq pipeline",
+            description = "QC metrics from 10X genomics mkfastq pipelines (cellranger, spaceranger, cellranger-atac, longranger)",
             plot = table.plot(self.cellranger_data, self.cellranger_qc_headers, {})
         )
 
