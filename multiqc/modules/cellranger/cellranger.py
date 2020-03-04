@@ -76,7 +76,7 @@ class MultiqcModule(BaseMultiqcModule):
         except:
             log.warn("Could not parse cellranger JSON: '{}'".format(f['fn']))
             return None
-
+        self.cellranger_version = parsed_json['10x_software_version']
         for k in parsed_json['sample_qc'].keys():
             s_name = k
             self.add_data_source(f, s_name)
@@ -91,8 +91,14 @@ class MultiqcModule(BaseMultiqcModule):
 
         headers = OrderedDict()
         headers['number_reads'] = {
-            'title': '{} Reads'.format(config.read_count_prefix),
-            'description': 'Total reads before filtering ({})'.format(config.read_count_desc),
+            'title': '{} {}Reads'.format(
+                config.read_count_prefix,
+                "PE " if 'atac' in self.cellranger_version else ""
+                ),
+            'description': 'Total {}reads before filtering ({})'.format(
+                "paired end " if 'atac' in self.cellranger_version else "", 
+                config.read_count_desc
+                ),
             'min': 0,
             'modify': lambda x: x * config.read_count_multiplier,
             'scale': 'GnBu',
