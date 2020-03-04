@@ -8,7 +8,7 @@ import logging
 import json
 
 from multiqc import config
-from multiqc.plots import bargraph, linegraph
+from multiqc.plots import bargraph, linegraph, table
 from multiqc.modules.base_module import BaseMultiqcModule
 
 # Initialise the logger
@@ -45,8 +45,28 @@ class MultiqcModule(BaseMultiqcModule):
         ## Parse whole JSON to save all its content
         self.write_data_file(self.cellranger_data, 'multiqc_cellranger')
 
+
+
         # General Stats Table
-        self.cellranger_general_stats_table()
+        self.cellranger_set_table_headers()
+
+        self.add_section(
+            name = "10X genomics mkfastq",
+            anchor = "cellranger-mkfastq-qc",
+            description = "QC metrics from 10X genomics mkfastq pipelines (cellranger, spaceranger, cellranger-atac, longranger)",
+            plot = table.plot(self.cellranger_data, self.cellranger_qc_headers, {})
+        )
+
+
+    def modify_sample_metrics(sample_metrics):
+        for k, v in sample_metrics.items():
+            if k in ['number_reads', 'gem_count_estimate']:
+                sample_metrics[k] = int(v)
+            elif k in ['barcode_exact_match_ratio', 'barcode_q30_base_ratio', 'read1_q30_base_ratio', 'read2_q30_base_ratio', 'bc_on_whitelist']:
+                sample_metrics[k] = round(float(v)*100.0,2)
+            elif k == 'mean_barcode_qscore':
+                sample_metrics[k] = round(float(v),2)
+        return sample_metrics
 
 
     def parse_cellranger_log(self, f):
@@ -65,7 +85,7 @@ class MultiqcModule(BaseMultiqcModule):
         # Don't delete dicts with subkeys, messes up multi-panel plots
 
 
-    def cellranger_general_stats_table(self):
+    def cellranger_set_table_headers(self):
         """ Take the parsed stats from the cellranger report and add it to the
         General Statistics table at the top of the report """
 
@@ -80,15 +100,26 @@ class MultiqcModule(BaseMultiqcModule):
         }
         if 'gem_count_estimate' in self.cellranger_data[list(self.cellranger_data.keys())[0]].keys():
             headers['gem_count_estimate'] = {
-                'title': 'GEM estimate',
-                'description': 'GEM count estimate',
-                'format': '{:n}',
+                'title': '{} GEM estimate'.format(config.read_count_prefix),
+                'description': 'GEM count estimate ({})'.format(config.read_count_desc),
+                'modify': lambda x: x * config.read_count_multiplier,
                 'min': 0,
                 'scale': 'GnBu',
+                'shared_key': 'read_count',
             }
         headers['barcode_exact_match_ratio'] = {
             'title': 'Ratio perfect BC',
             'description': 'Ratio of perfect match for barcodes',
+            'min': 0,
+            'max': 100,
+            'modify': lambda x: x * 100.0,
+            'format': '{:,.1f}',
+            'suffix': '%',
+            'scale': 'RdYlGn-rev'
+        }
+        headers['bc_on_whitelist'] = {
+            'title': 'BC on whitelist',
+            'description': 'Percentage of barcodes on whitelist',
             'min': 0,
             'max': 100,
             'modify': lambda x: x * 100.0,
@@ -105,6 +136,13 @@ class MultiqcModule(BaseMultiqcModule):
             'format': '{:,.1f}',
             'scale': 'GnBu',
             'suffix': '%',
+        }
+        headers['mean_barcode_qscore'] =  {
+            'title': 'BC Qscore',
+            'description': 'Mean barcode Q score',
+            'format': '{:,.1f}',
+            'min': 0,
+            'scale': 'GnBu'
         }
         headers['read1_q30_base_ratio'] = {
             'title': 'R1 % > Q30',
@@ -126,6 +164,6 @@ class MultiqcModule(BaseMultiqcModule):
             'scale': 'GnBu',
             'suffix': '%',
         }
-
-        self.general_stats_addcols(self.cellranger_data, headers)
+        self.cellranger_qc_headers = headers
+        #self.general_stats_addcols(self.cellranger_data, headers)
 
