@@ -100,6 +100,7 @@ setup(
             'bowtie2 = multiqc.modules.bowtie2:MultiqcModule',
             'busco = multiqc.modules.busco:MultiqcModule',
             'cellranger = multiqc.modules.cellranger:MultiqcModule',
+            'qiime2 = multiqc.modules.qiime2:MultiqcModule',
             'clipandmerge = multiqc.modules.clipandmerge:MultiqcModule',
             'clusterflow = multiqc.modules.clusterflow:MultiqcModule',
             'conpair = multiqc.modules.conpair:MultiqcModule',

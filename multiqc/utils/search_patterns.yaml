@@ -586,3 +586,11 @@ vcftools/tstv_summary:
     fn: '*.TsTv.summary'
 verifybamid/selfsm:
     fn: '*.selfSM'
+qiime2/dada2:
+    fn: 'metadata.tsv'
+    contents: 'percentage of input non-chimeric'
+    num_lines: 2
+qiime2/taxonomy:
+    fn: 'level-*.csv'
+qiime2/rpca:
+    fn: 'ordination_samples.txt'
