@@ -40,9 +40,10 @@ class MultiqcModule(BaseMultiqcModule):
                         self.add_data_source(f, s_name)
                         self.qiime2_dada2[region][s_name] = vals
 
-            if len(self.qiime2_dada2) == 0:
-                raise UserWarning
-        log.info("Found {} dada2 reports".format(len(self.qiime2_dada2) - 1))
+        if len(self.qiime2_dada2.keys()) == 0:
+            raise UserWarning
+                
+        log.info("Found {} dada2 regions".format(len(self.qiime2_dada2)))
 
         self.write_data_file(self.qiime2_dada2, 'multiqc_qiime2_dada2')
 
@@ -72,9 +73,9 @@ class MultiqcModule(BaseMultiqcModule):
                         self.add_data_source(f, s_name)
                         self.qiime2_taxa[taxa][s_name] = vals
 
-            if len(self.qiime2_taxa) == 0:
-                raise UserWarning
-        log.info("Found {} taxonomy reports".format(len(self.qiime2_taxa)))
+        if len(self.qiime2_taxa) == 0:
+            raise UserWarning
+        log.info("Found {} taxonomy reports".format(len(self.qiime2_taxa.keys())))
 
         self.write_data_file(self.qiime2_taxa, 'multiqc_qiime2_taxonomy')
 
@@ -96,8 +97,8 @@ class MultiqcModule(BaseMultiqcModule):
                     self.add_data_source(f, s_name)
                     self.qiime2_rpca[s_name] = vals
 
-            if len(self.qiime2_rpca) == 0:
-                raise UserWarning
+        if len(self.qiime2_rpca) == 0:
+            raise UserWarning
         log.info("Found {} ordination reports".format(len(self.qiime2_rpca)))
 
         self.write_data_file(self.qiime2_rpca, 'multiqc_qiime2_taxonomy')
