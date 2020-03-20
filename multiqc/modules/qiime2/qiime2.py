@@ -121,7 +121,7 @@ class MultiqcModule(BaseMultiqcModule):
         """ Parse the dada2 stats export """
         region_data = defaultdict(dict)
         count_data = defaultdict(dict)
-        
+        all_regions = defaultdict(dict)
         try:
             txt = f['f'].read().splitlines()
             header = [i.strip() for i in txt.pop(0).split('\t')[1:]]
@@ -148,13 +148,15 @@ class MultiqcModule(BaseMultiqcModule):
                     counts[keep[i]] = cumulative_counts[i-1] - cumulative_counts[i]
                 counts['passed'] = cumulative_counts[i]
                 count_data[region][s_name] = counts
-                if s_name in count_data['Total']:
+
+                if s_name in all_regions:
                     for k, v in counts.items():
-                        count_data['Total'][s_name][k] += v
+                        all_regions[s_name][k] += v
                 else:
-                    count_data['Total'][s_name] = {}
                     for k, v in counts.items():
-                        count_data['Total'][s_name][k] = v 
+                        all_regions[s_name][k] = v
+        count_data['Total'] = all_regions
+        
         return count_data
 
     def _extract_scores(self, txt):
