@@ -31,6 +31,7 @@ class MultiqcModule(BaseMultiqcModule):
         self.qiime2_dada2 = defaultdict(dict)
         
         # Dada2 filtering stats
+        self.qiime2_dada2['Total'] = defaultdict(dict)
         for f in self.find_log_files('qiime2/dada2', filehandles=True):
             parsed_data = self.parse_qiime2_dada2_export(f)
             if parsed_data is not None:
@@ -39,7 +40,11 @@ class MultiqcModule(BaseMultiqcModule):
                     for s_name, vals in sample_data.items():
                         self.add_data_source(f, s_name)
                         self.qiime2_dada2[region][s_name] = vals
-
+                        if s_name in self.qiime2_dada2['Total']:
+                            for k, v in vals.items():
+                                self.qiime2_dada2['Total'][s_name][k] += v
+                        else:
+                            self.qiime2_dada2['Total'][s_name] = vals.copy()
         if len(self.qiime2_dada2.keys()) == 0:
             raise UserWarning
                 
@@ -121,7 +126,6 @@ class MultiqcModule(BaseMultiqcModule):
         """ Parse the dada2 stats export """
         region_data = defaultdict(dict)
         count_data = defaultdict(dict)
-        all_regions = defaultdict(dict)
         try:
             txt = f['f'].read().splitlines()
             header = [i.strip() for i in txt.pop(0).split('\t')[1:]]
@@ -138,7 +142,6 @@ class MultiqcModule(BaseMultiqcModule):
         except:
             log.warn("Could not parse qiime2 metadata: '{}'".format(f['fn']))
             return None
-
         for region, sample_data in region_data.items():
             for s_name, vals in sample_data.items():
                 keep = ['input', 'filtered', 'denoised', 'merged', 'non-chimeric']
@@ -149,14 +152,6 @@ class MultiqcModule(BaseMultiqcModule):
                 counts['passed'] = cumulative_counts[i]
                 count_data[region][s_name] = counts
 
-                if s_name in all_regions:
-                    for k, v in counts.items():
-                        all_regions[s_name][k] += v
-                else:
-                    for k, v in counts.items():
-                        all_regions[s_name][k] = v
-        count_data['Total'] = all_regions
-        
         return count_data
 
     def _extract_scores(self, txt):
@@ -268,6 +263,7 @@ class MultiqcModule(BaseMultiqcModule):
         keys['non-chimeric'] = { 'name': 'Chimeric' }
 
         regions = list(self.qiime2_dada2.keys())
+
         if 'Total' in regions:
             regions.remove('Total')
             regions = sorted(regions)
@@ -275,8 +271,8 @@ class MultiqcModule(BaseMultiqcModule):
                 regions.insert(0, 'Total')
         else:
             regions = sorted(regions)
+
         #log.info("Region labels: {} ".format(str(regions))) 
-        
         data = [self.qiime2_dada2[r] for r in regions]
         pconfig = {'id': 'dada2-stats-plot',
                    'title': 'Dada2: Sequence Stats',
