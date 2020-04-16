@@ -188,6 +188,9 @@ busco:
 cellranger:
     fn: 'qc_summary.json'
     contents: '10x_software_version'
+starsolo:
+    fn: '*_Summary.csv'
+    contents: 'Number of Reads'
 custom_content:
     fn_re: '.+_mqc\.(yaml|yml|json|txt|csv|tsv|log|out|png|jpg|jpeg)'
 clipandmerge:
