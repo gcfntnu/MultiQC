@@ -6,6 +6,7 @@ from __future__ import print_function
 from collections import OrderedDict
 import logging
 import pandas as pd
+import os
 from multiqc import config
 from multiqc.plots import bargraph, linegraph, table
 from multiqc.modules.base_module import BaseMultiqcModule
