@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 
-""" MultiQC module to parse output from cellranger, cellranger-atac, spaceranger """
+""" MultiQC module to parse STAR solo Summary.csv """
 
 from __future__ import print_function
 from collections import OrderedDict
 import logging
 import pandas as pd
-import os
 from multiqc import config
 from multiqc.plots import bargraph, linegraph, table
 from multiqc.modules.base_module import BaseMultiqcModule
@@ -16,7 +15,7 @@ log = logging.getLogger(__name__)
 
 class MultiqcModule(BaseMultiqcModule):
     """
-    cellranger module class
+    starsolo module class
     """
 
     def __init__(self):
@@ -26,7 +25,7 @@ class MultiqcModule(BaseMultiqcModule):
             href='https://github.com/alexdobin/STAR',
             info="STAR solo single cell gene quantification.")
 
-        # Find and load any cellranger reports
+        # Find and load any starsolo reports
         self.starsolo_data = dict()
         self.starsolo_all_data = dict()
 
@@ -34,7 +33,7 @@ class MultiqcModule(BaseMultiqcModule):
             self.parse_starsolo_log(f)
 
         # Filter to strip out ignored sample names
-        self.starsolo_data = self.ignore_samples(self.cellranger_data)
+        self.starsolo_data = self.ignore_samples(self.starsolo_data)
 
         if len(self.starsolo_data) == 0:
             raise UserWarning
@@ -43,7 +42,7 @@ class MultiqcModule(BaseMultiqcModule):
 
         # Write parsed report data to a file
         ## Parse whole JSON to save all its content
-        self.write_data_file(self.starsolo_data, 'multiqc_cellranger')
+        self.write_data_file(self.starsolo_data, 'multiqc_starsolo')
 
 
 
@@ -65,16 +64,16 @@ class MultiqcModule(BaseMultiqcModule):
         except:
             log.warn("Could not parse STAR solo csv: '{}'".format(f['fn']))
             return None
-        s_name = os.path.basename(f['f']).split('_')[0]
+        s_name = f['fn'].split('_')[0]
         s_data = dict()
         for i, row in parsed_csv.iterrows():
             s_data[row[0]] = row[1]
-            self.cellranger_data[s_name] = s_data
+            self.starsolo_data[s_name] = s_data
 
 
 
-    def cellranger_set_table_headers(self):
-        """ Take the parsed stats from the cellranger report and add it to the
+    def starsolo_set_table_headers(self):
+        """ Take the parsed stats from the starsolo summary and add it to the
         General Statistics table at the top of the report """
 
         headers = OrderedDict()
