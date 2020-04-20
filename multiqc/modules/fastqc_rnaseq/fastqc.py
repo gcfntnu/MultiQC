@@ -201,7 +201,7 @@ class MultiqcModule(BaseMultiqcModule):
             bs = self.fastqc_data[s_name]['basic_statistics']
             data[s_name] = {
                 'percent_gc': bs['%GC'],
-                'avg_sequence_length': bs['avg_sequence_length'],
+                'avg_sequence_length': bs.get('avg_sequence_length',0),
                 'total_sequences': bs['Total Sequences'],
             }
             try:
@@ -535,7 +535,7 @@ class MultiqcModule(BaseMultiqcModule):
                 data_norm[s_name] = dict()
                 total = sum( [ c for c in data[s_name].values() ] )
                 for gc, count in data[s_name].items():
-                    data_norm[s_name][gc] = (count / total) * 100
+                    data_norm[s_name][gc] = (count / total) * 100 if total > 0 else 0
         if len(data) == 0:
             log.debug('per_sequence_gc_content not found in FastQC reports')
             return None
