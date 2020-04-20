@@ -136,7 +136,7 @@ class MultiqcModule(BaseMultiqcModule):
             unmapped_count = parsed_data['total_reads'] - total_mapped
             total_unmapped_percent = parsed_data['unmapped_mismatches_percent'] + parsed_data['unmapped_tooshort_percent'] + parsed_data['unmapped_other_percent']
             parsed_data['total_mapped'] = total_mapped
-            parsed_data['total_mapped_percent'] = round(float(total_mapped)/float(parsed_data['total_reads']),2)
+            parsed_data['total_mapped_percent'] = round(100*float(total_mapped)/float(parsed_data['total_reads']),2)
             try:
                 parsed_data['unmapped_mismatches'] = int(round(unmapped_count * (parsed_data['unmapped_mismatches_percent'] / total_unmapped_percent), 0))
                 parsed_data['unmapped_tooshort'] = int(round(unmapped_count * (parsed_data['unmapped_tooshort_percent'] / total_unmapped_percent), 0))
