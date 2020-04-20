@@ -135,6 +135,8 @@ class MultiqcModule(BaseMultiqcModule):
             total_mapped = parsed_data['uniquely_mapped'] + parsed_data['multimapped'] + parsed_data['multimapped_toomany']
             unmapped_count = parsed_data['total_reads'] - total_mapped
             total_unmapped_percent = parsed_data['unmapped_mismatches_percent'] + parsed_data['unmapped_tooshort_percent'] + parsed_data['unmapped_other_percent']
+            parsed_data['total_mapped'] = total_mapped
+            parsed_data['total_mapped_percent'] = round(100*float(total_mapped)/float(parsed_data['total_reads']),2)
             try:
                 parsed_data['unmapped_mismatches'] = int(round(unmapped_count * (parsed_data['unmapped_mismatches_percent'] / total_unmapped_percent), 0))
                 parsed_data['unmapped_tooshort'] = int(round(unmapped_count * (parsed_data['unmapped_tooshort_percent'] / total_unmapped_percent), 0))
@@ -188,6 +190,23 @@ class MultiqcModule(BaseMultiqcModule):
         basic stats table at the top of the report """
 
         headers = OrderedDict()
+        headers['total_mapped_percent'] = {
+            'title': '% Aligned',
+            'description': '% Total mapped reads',
+            'max': 100,
+            'min': 0,
+            'suffix': '%',
+            'scale': 'YlGn'
+        }
+        headers['total_mapped'] = {
+            'title': '{} Aligned'.format(config.read_count_prefix),
+            'description': 'Total mapped reads ({})'.format(config.read_count_desc),
+            'min': 0,
+            'scale': 'PuRd',
+            'modify': lambda x: x * config.read_count_multiplier,
+            'shared_key': 'read_count'
+        }
+        """
         headers['uniquely_mapped_percent'] = {
             'title': '% Aligned',
             'description': '% Uniquely mapped reads',
@@ -204,6 +223,7 @@ class MultiqcModule(BaseMultiqcModule):
             'modify': lambda x: x * config.read_count_multiplier,
             'shared_key': 'read_count'
         }
+        """
         self.general_stats_addcols(self.star_data, headers)
 
     def star_alignment_chart (self):
