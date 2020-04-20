@@ -210,5 +210,7 @@ class MultiqcModule(BaseMultiqcModule):
             'shared_key': 'read_count',
         }
         self.starsolo_qc_headers = headers
-        #self.general_stats_addcols(self.starsolo_data, starsolo_genstats_headers)
+        gen_stat_cols = ['Mean Reads per Cell', 'Estimated Number of Cells', 'Sequencing Saturation']
+        gen_stat_headers = {k: headers[k] for k in gen_stat_cols}
+        self.general_stats_addcols(self.starsolo_data, gen_stat_headers)
 
