@@ -64,7 +64,7 @@ class MultiqcModule(BaseMultiqcModule):
         except:
             log.warn("Could not parse STAR solo csv: '{}'".format(f['fn']))
             return None
-        s_name = f['fn'].split('_')[0]
+        s_name = f['fn'].replace("_Summary.csv", "")
         s_data = dict()
         for i, row in parsed_csv.iterrows():
             s_data[row[0]] = row[1]
