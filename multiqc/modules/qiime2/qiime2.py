@@ -212,13 +212,15 @@ class MultiqcModule(BaseMultiqcModule):
                 self.db = 'silva'
             elif 'k__Bacteria' in txt[0]:
                 self.db = 'greengenes'
+            elif 'k__Fungi' in txt[0]:
+                self.db = 'unite'
             
             header = [i.strip() for i in txt.pop(0).split(',')]
             if self.db == 'silva':
                 db_patt = 'D_0__'
                 sep = ';'
             else:
-                db_patt = 'k_0__'
+                db_patt = 'k__'
                 sep = ';'
             labels = []
             index = []

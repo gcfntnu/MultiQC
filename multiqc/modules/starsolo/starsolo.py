@@ -52,7 +52,7 @@ class MultiqcModule(BaseMultiqcModule):
         self.add_section(
             name = "STAR solo summary",
             anchor = "starsolo-summary",
-            description = "QC metrics from STAR solo single cell gene quantification",
+            description = "QC metrics from STAR solo single cell gene quantification. The metric Mean Reads/Cell is based on the number of reads in cells mapped to unique genes divided by the estimated number of cells. Note that this will differ from the reports provided by Cellranger which uses the total number of reads divided by their estimated number of cells.",
             plot = table.plot(self.starsolo_data, self.starsolo_qc_headers, {})
         )
 
@@ -64,7 +64,7 @@ class MultiqcModule(BaseMultiqcModule):
         except:
             log.warn("Could not parse STAR solo csv: '{}'".format(f['fn']))
             return None
-        s_name = f['fn'].split('_')[0]
+        s_name = f['fn'].replace("_Summary.csv", "")
         s_data = dict()
         for i, row in parsed_csv.iterrows():
             s_data[row[0]] = row[1]
@@ -165,7 +165,7 @@ class MultiqcModule(BaseMultiqcModule):
             'title': '{} Mean Reads/Cell'.format(
                 config.read_count_prefix,
                 ),
-            'description': 'Mean Reads per Cell ({})'.format(
+            'description': 'Mean reads in cells mapped to unique genes ({})'.format(
                 config.read_count_desc
                 ),
             'min': 0,
@@ -173,11 +173,11 @@ class MultiqcModule(BaseMultiqcModule):
             'scale': 'GnBu',
             'shared_key': 'read_count',
         }
-        headers['Mean UMI per Cell'] = {
-            'title': '{} Mean UMI/Cells'.format(
+        headers['Median UMI per Cell'] = {
+            'title': '{} Median UMI/Cells'.format(
                 config.read_count_prefix,
                 ),
-            'description': 'Mean UMI per Cell ({})'.format(
+            'description': 'Median UMI per Cell ({})'.format(
                 config.read_count_desc
                 ),
             'min': 0,
@@ -185,11 +185,11 @@ class MultiqcModule(BaseMultiqcModule):
             'scale': 'GnBu',
             'shared_key': 'read_count',
         }
-        headers['Mean Genes per Cell'] = {
-            'title': '{} Mean Genes/Cell'.format(
+        headers['Median Genes per Cell'] = {
+            'title': '{} Median Genes/Cell'.format(
                 config.read_count_prefix,
                 ),
-            'description': 'Mean Genes per Cell ({})'.format(
+            'description': 'Median Genes per Cell ({})'.format(
                 config.read_count_desc
                 ),
             'min': 0,
