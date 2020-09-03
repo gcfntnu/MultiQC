@@ -7,6 +7,7 @@ from collections import OrderedDict, defaultdict
 import logging
 import json
 import re
+import pandas as pd
 
 from multiqc import config
 from multiqc.plots import bargraph, scatter
@@ -14,6 +15,10 @@ from multiqc.modules.base_module import BaseMultiqcModule
 
 # Initialise the logger
 log = logging.getLogger(__name__)
+
+default_colors = ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9',
+        '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1']
+
 
 class MultiqcModule(BaseMultiqcModule):
     """
@@ -173,28 +178,31 @@ class MultiqcModule(BaseMultiqcModule):
                 rows[s_name] = {'x': x, 'y': y}
         return None
 
-    def _extract_samples(self, txt):
-        rows = []
-        for i, line in enumerate(txt):
-            if line.startwith('Samples:'):
-                name, num_rows, num_cols = line.split('\t')
-                end_row = i + int(num_rows)
-            if i == end_row:
-                return rows
-            if name is not None:
-                els = [float(i) for i in line.split('\t')]
-                rows.append(els)
-        return None
-
+    def _extract_sample_info(self, f):
+        f.seek(0)
+        while not f.readline().startswith("Samples:"):
+            continue
+        return pd.read_csv(f, header=0, sep='\t')
         
     def parse_qiime2_rpca(self, f):
         scores = defaultdict(dict)
         try:
             txt = f['f'].read().splitlines()
-            return self._extract_scores(txt)
-        except:
-           log.warn("Could not parse qiime2 robust pca metadata: '{}'".format(f['fn'])) 
-           return None
+            rows = self._extract_scores(txt)
+            samples = self._extract_sample_info(f['f'])
+            if 'Sample_Group' in samples.columns:
+                groups = set(samples['Sample_Group'])
+                for i,g in enumerate(groups):
+                    g_df = samples[samples["Sample_Group"] == g]
+                    for s_id in g_df['Sample_ID']:
+                        if s_id in rows.keys():
+                            rows[s_id]['color'] = default_colors[i]
+                            rows[s_id]['name'] = g
+            return rows
+        except Exception as e:
+            log.warn(e)
+            log.warn("Could not parse qiime2 robust pca metadata: '{}'".format(f['fn'])) 
+            return None
        
     def parse_qiime2_taxonomy_export(self, f):
         """ Parse the taxonomy bar export """
