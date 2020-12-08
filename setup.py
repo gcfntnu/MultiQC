@@ -168,7 +168,8 @@ setup(
             'tophat = multiqc.modules.tophat:MultiqcModule',
             'trimmomatic = multiqc.modules.trimmomatic:MultiqcModule',
             'vcftools = multiqc.modules.vcftools:MultiqcModule',
-            'verifybamid = multiqc.modules.verifybamid:MultiqcModule'
+            'verifybamid = multiqc.modules.verifybamid:MultiqcModule',
+            'unitas = multiqc.modules.unitas:MultiqcModule'
         ],
         'multiqc.templates.v1': [
             'default = multiqc.templates.default',
