@@ -43,21 +43,25 @@ class MultiqcModule(BaseMultiqcModule):
         for f in self.find_log_files('unitas/annotation'):
             self.parse_annotation(f)
         self.annotations = self.ignore_samples(self.annotations)
+        if len(self.annotations) == 0:
+            raise UserWarning
 
         # parse sequence length distribution from .info files
         for f in self.find_log_files('unitas/seqlen'):
             for biotype in self.biotypes:
                 match = SEQLEN_MATCH.get(biotype, lambda x: False)
                 if match(f): 
-                    print(biotype, f['fn'])
                     self.parse_seqlen(f, biotype)
         self.seqlen = self.ignore_samples(self.seqlen)
-
+        if len(self.seqlen) == 0:
+            raise UserWarning
         # parse the simplified mirna counts
         for f in self.find_log_files('unitas/mirna'):
             self.parse_mirna_simplified(f)
         self.metrics = self.ignore_samples(self.metrics)
-
+        if len(self.metrics) == 0:
+            raise UserWarning
+        
         self.unitas_general_stats()
         self.annotation_plot()
         self.seqlen_lineplot()
