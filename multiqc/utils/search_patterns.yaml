@@ -579,6 +579,12 @@ tophat:
 trimmomatic:
     contents: 'Trimmomatic'
     shared: true
+unitas/annotation:
+    fn: 'unitas.annotation_summary.txt'
+unitas/seqlen:
+    fn: 'unitas.*.info'
+unitas/mirna:
+    fn: 'miR-table_*.simplified.txt'
 vcftools/relatedness2:
     fn: '*.relatedness2'
 vcftools/tstv_by_count:
