@@ -39,7 +39,7 @@ class MultiqcModule(BaseMultiqcModule):
         self.qiime2_dada2['Total'] = defaultdict(dict)
         for f in self.find_log_files('qiime2/dada2', filehandles=True):
             parsed_data = self.parse_qiime2_dada2_export(f)
-            if parsed_data is not None:
+            if len(parsed_data) > 0:
                 for region, sample_data in parsed_data.items():
                     sample_data = self.ignore_samples(sample_data)
                     for s_name, vals in sample_data.items():
@@ -50,9 +50,9 @@ class MultiqcModule(BaseMultiqcModule):
                                 self.qiime2_dada2['Total'][s_name][k] += v
                         else:
                             self.qiime2_dada2['Total'][s_name] = vals.copy()
-        if len(self.qiime2_dada2.keys()) == 0:
+        if len(self.qiime2_dada2['Total']) == 0:
             raise UserWarning
-                
+            
         log.info("Found {} dada2 regions".format(len(self.qiime2_dada2)))
 
         self.write_data_file(self.qiime2_dada2, 'multiqc_qiime2_dada2')
@@ -146,7 +146,7 @@ class MultiqcModule(BaseMultiqcModule):
                 region_data[region][s_name] = {i:j for i, j in zip(header, els)}
         except:
             log.warn("Could not parse qiime2 metadata: '{}'".format(f['fn']))
-            return None
+            return {}
         for region, sample_data in region_data.items():
             for s_name, vals in sample_data.items():
                 keep = ['input', 'filtered', 'denoised', 'merged', 'non-chimeric']

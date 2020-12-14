@@ -317,6 +317,9 @@ module_order:
             - DNA
 
     # Post-alignment processing
+    - unitas:
+        module_tag:
+            - RNA
     - homer:
         module_tag:
             - RNA
