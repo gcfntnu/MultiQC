@@ -165,7 +165,7 @@ class MultiqcModule(BaseMultiqcModule):
     def seqlen_lineplot (self):
         """ Make HTML for sequence length line plots """
         biotypes = [i for i in self.biotypes if i != 'other']
-        data = [self.seqlen[k] for k in biotypes]
+        data = [self.seqlen[k] for k in biotypes if k in self.seqlen]
         data_labels = []
         for biotype in biotypes:
             data_labels.append({'name': biotype, 'ylab': 'Number of {} Reads'.format(biotype)})
