@@ -16,7 +16,7 @@ from multiqc.plots import bargraph, linegraph
 log = logging.getLogger(__name__)
 
 
-SEQLEN_MATCH = {'miRNA': lambda f: re.match('^unitas\\.miR\\.(.*)\\.info$',f['fn']),
+SEQLEN_MATCH = {'miRNA': lambda f: 'non-' not in f['fn'] and re.match('^unitas\\.miR\\.(.*)\\.info$',f['fn']),
                 'tRNA': lambda f: f['fn']== 'unitas.tRNA.info',
                 'rRNA': lambda f: f['fn'] == 'unitas.rRNA.info',
                 'snoRNA': lambda f: f['fn'] == 'unitas.snoRNA.info',
@@ -43,6 +43,7 @@ class MultiqcModule(BaseMultiqcModule):
         for f in self.find_log_files('unitas/annotation'):
             self.parse_annotation(f)
         self.annotations = self.ignore_samples(self.annotations)
+        log.info('Found {} mirna annotation reports'.format(len(self.annotations)))
         if len(self.annotations) == 0:
             raise UserWarning
 
@@ -50,15 +51,19 @@ class MultiqcModule(BaseMultiqcModule):
         for f in self.find_log_files('unitas/seqlen'):
             for biotype in self.biotypes:
                 match = SEQLEN_MATCH.get(biotype, lambda x: False)
-                if match(f): 
+                if match(f):
                     self.parse_seqlen(f, biotype)
         self.seqlen = self.ignore_samples(self.seqlen)
+        for k, v in self.seqlen.items():
+            log.info('Found {} {} info reports'.format(len(v), k))
         if len(self.seqlen) == 0:
             raise UserWarning
+        
         # parse the simplified mirna counts
         for f in self.find_log_files('unitas/mirna'):
             self.parse_mirna_simplified(f)
         self.metrics = self.ignore_samples(self.metrics)
+        log.info('Found {} mirna count reports'.format(len(self.metrics)))
         if len(self.metrics) == 0:
             raise UserWarning
         
@@ -93,7 +98,7 @@ class MultiqcModule(BaseMultiqcModule):
                 break
             x, y = line.split('\t')
             data[int(x)] = float(y or 0)
-        self.seqlen[key][s_name] = data
+        self.seqlen[key][s_name] = data      
 
     def parse_annotation(self, f):
         """parse the unitas.annotation_summary.txt file from unitas
@@ -111,10 +116,10 @@ class MultiqcModule(BaseMultiqcModule):
                 if els[0] in self.biotypes:
                     self.annotations[s_name][els[0]] = val
                 else:
+                    if not 'other' in self.biotypes:
+                        self.biotypes.append('other')
                     self.annotations[s_name]['other'] = val
                 total += val
-                    
-        self.biotypes.append('other')
         if not s_name in self.metrics:
             self.metrics[s_name] = {}
         for s_name, anno in self.annotations.items():
@@ -139,7 +144,6 @@ class MultiqcModule(BaseMultiqcModule):
             'scale': 'Bu',
             'format': '{:,.0f}'
         }
-      
         self.general_stats_addcols(self.metrics, headers)
 
     def annotation_plot(self):
@@ -164,8 +168,8 @@ class MultiqcModule(BaseMultiqcModule):
 
     def seqlen_lineplot (self):
         """ Make HTML for sequence length line plots """
-        biotypes = [i for i in self.biotypes if i != 'other']
-        data = [self.seqlen[k] for k in biotypes if k in self.seqlen]
+        biotypes = [i for i in self.biotypes if i != 'other' and i in self.seqlen]
+        data = [self.seqlen[k] for k in biotypes]
         data_labels = []
         for biotype in biotypes:
             data_labels.append({'name': biotype, 'ylab': 'Number of {} Reads'.format(biotype)})
@@ -174,9 +178,9 @@ class MultiqcModule(BaseMultiqcModule):
             'title': 'Sequence length distribution',
             'ylab': '# Reads',
             'xlab': 'Nucleotide position',
-            'xmin': 0,
+            'xmin': 10,
             'xmax': 50,
-            'tt_label': "<strong>{point.x}% from 5'</strong>: {point.y:.2f}",
+            'tt_label': "<strong>{point.x}'</strong>",
             'data_labels': data_labels
         }
         self.add_section (
