@@ -112,6 +112,7 @@ setup(
             'dedup = multiqc.modules.dedup:MultiqcModule',
             'deeptools = multiqc.modules.deeptools:MultiqcModule',
             'fastp = multiqc.modules.fastp:MultiqcModule',
+            'fastv = multiqc.modules.fastv:MultiqcModule',
             'fastq_screen = multiqc.modules.fastq_screen:MultiqcModule',
             'fastqc = multiqc.modules.fastqc:MultiqcModule',
             'fastqc_rnaseq = multiqc.modules.fastqc_rnaseq:MultiqcModule',

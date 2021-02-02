@@ -517,6 +517,9 @@ module_order:
         module_tag:
             - RNA
             - DNA
+    - fastv:
+        module_tag:
+             - DNA
     - fastqc:
         module_tag:
             - RNA

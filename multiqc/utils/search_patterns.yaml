@@ -252,6 +252,8 @@ deeptools/plotProfile:
     num_lines: 1
 fastp:
     fn: '*fastp.json'
+fastv:
+    fn: '*fastv.json'
 fastq_screen:
     fn: '*_screen.txt'
 fastqc/data:
