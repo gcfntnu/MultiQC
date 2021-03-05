@@ -21,7 +21,7 @@ class MultiqcModule(BaseMultiqcModule):
     def __init__(self):
 
         # Initialise the parent object
-        super(MultiqcModule, self).__init__(name='cellranger_count', anchor='cellranger_count',
+        super(MultiqcModule, self).__init__(name='Cellranger Count', anchor='cellranger_count',
             href='https://support.10xgenomics.com',
             info="10X genomics workflows for single cell sequencing analysis.")
 
@@ -48,7 +48,6 @@ class MultiqcModule(BaseMultiqcModule):
 
         # General Stats Table
         self.cellranger_count_set_table_headers()
-
         self.add_section(
             name = "cellranger count summary",
             anchor = "cellranger_count-summary",
@@ -73,6 +72,8 @@ class MultiqcModule(BaseMultiqcModule):
     def cellranger_count_set_table_headers(self):
         """ Take the parsed stats from the cellranger_count summary and add it to the
         General Statistics table at the top of the report """
+        def convert_cellranger_count_number(num):
+            return int(num.replace(",","")) if type(num) == str else num
 
         headers = OrderedDict()
         headers['Number of Reads'] = {
@@ -83,7 +84,7 @@ class MultiqcModule(BaseMultiqcModule):
                 config.read_count_desc
                 ),
             'min': 0,
-            'modify': lambda x: x * config.read_count_multiplier,
+            'modify': lambda x: convert_cellranger_count_number(x) * config.read_count_multiplier,
             'scale': 'GnBu',
             'shared_key': 'read_count',
         }
@@ -145,7 +146,7 @@ class MultiqcModule(BaseMultiqcModule):
                 config.read_count_desc
                 ),
             'min': 0,
-            'modify': lambda x: x * config.read_count_multiplier,
+            'modify': lambda x: convert_cellranger_count_number(x) * config.read_count_multiplier,
             'scale': 'GnBu',
             'shared_key': 'read_count',
         }
@@ -157,7 +158,7 @@ class MultiqcModule(BaseMultiqcModule):
                 config.read_count_desc
                 ),
             'min': 0,
-            'modify': lambda x: x * config.read_count_multiplier,
+            'modify': lambda x: convert_cellranger_count_number(x) * config.read_count_multiplier,
             'scale': 'GnBu',
             'shared_key': 'read_count',
         }
@@ -169,7 +170,7 @@ class MultiqcModule(BaseMultiqcModule):
                 config.read_count_desc
                 ),
             'min': 0,
-            'modify': lambda x: x * config.read_count_multiplier,
+            'modify': lambda x: convert_cellranger_count_number(x) * config.read_count_multiplier,
             'scale': 'GnBu',
             'shared_key': 'read_count',
         }
@@ -181,7 +182,7 @@ class MultiqcModule(BaseMultiqcModule):
                 config.read_count_desc
                 ),
             'min': 0,
-            'modify': lambda x: x * config.read_count_multiplier,
+            'modify': lambda x: convert_cellranger_count_number(x) * config.read_count_multiplier,
             'scale': 'GnBu',
             'shared_key': 'read_count',
         }
@@ -193,7 +194,7 @@ class MultiqcModule(BaseMultiqcModule):
                 config.read_count_desc
                 ),
             'min': 0,
-            'modify': lambda x: x * config.read_count_multiplier,
+            'modify': lambda x: convert_cellranger_count_number(x) * config.read_count_multiplier,
             'scale': 'GnBu',
             'shared_key': 'read_count',
         }
