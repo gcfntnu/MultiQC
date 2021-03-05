@@ -55,6 +55,13 @@ class MultiqcModule(BaseMultiqcModule):
             plot = table.plot(self.cellranger_count_data, self.cellranger_count_qc_headers, {})
         )
 
+        self.add_section (
+           name = 'Confidently Mapped Reads',
+           anchor = 'cellranger_count_confidently_mapped',
+           description = 'Distribution of reads confidently mapped to genome in %.',
+           plot = self.cellranger_count_mapped_chart()
+        )
+
 
     def parse_cellranger_count_log(self, f):
         """ Parse the csv Summary output from STAR solo and save the summary statistics """
@@ -67,7 +74,29 @@ class MultiqcModule(BaseMultiqcModule):
         s_data = parsed_csv.to_dict(orient='index')[0]
         self.cellranger_count_data[s_name] = s_data
 
+    def cellranger_count_mapped_chart(self):
+        """
+        Function to generate barchart of confidently mapped reads from cellranger count workflow.
+        Reads Mapped Confidently to Intergenic Regions, Reads Mapped Confidently to Intronic Regions, Reads Mapped Confidently to Exonic Regions
+        """
 
+        keys = OrderedDict()
+        for k in ["Reads Mapped Confidently to Intergenic Regions", "Reads Mapped Confidently to Intronic Regions"," Reads Mapped Confidently to Exonic Regions"]:
+            self.cellranger_cound_data[k] = float(self.cellranger_cound_data[k].replace("%",""))
+        keys["Reads Mapped Confidently to Exonic Regions"] = {"name": "Exonic"}
+        keys["Reads Mapped Confidently to Intronic Regions"] = {"name": "Intronic"}
+        keys["Reads Mapped Confidently to Intergenic Regions"] = {"name": "Intergenic"}
+
+        # Config for the plot
+        pconfig = {
+            'id': 'cellranger_count_confidently_mapped',
+            'title': 'Cellranger count: Confidently Mapped Reads',
+            'ylab': '% Reads',
+            'cpswitch': False,
+            'hide_zero_cats': False,
+        }
+
+        return bargraph.plot(self.cellranger_count_data, keys, pconfig)
 
     def cellranger_count_set_table_headers(self):
         """ Take the parsed stats from the cellranger_count summary and add it to the
@@ -138,6 +167,26 @@ class MultiqcModule(BaseMultiqcModule):
             'scale': 'GnBu',
             'suffix': '%',
         }
+        headers['Reads Mapped Confidently to Genome'] = {
+            'title': '% Mapped Confidently to Genome',
+            'description': 'Percentage Reads Mapped Confidently to Genome: Unique+Multiple',
+            'min': 0,
+            'max': 100,
+            'modify': lambda x: x.replace("%",""),
+            'format': '{:,.1f}',
+            'scale': 'GnBu',
+            'suffix': '%',
+        }
+        headers['Reads Mapped Confidently to Transcriptome'] = {
+            'title': '% Mapped to Transcriptome',
+            'description': 'Percentage Reads Mapped Confidently to Transcriptome',
+            'min': 0,
+            'max': 100,
+            'modify': lambda x: x.replace("%",""),
+            'format': '{:,.1f}',
+            'scale': 'GnBu',
+            'suffix': '%',
+        }
         headers['Estimated Number of Cells'] = {
             'title': '{} # Cells'.format(
                 config.read_count_prefix,
@@ -199,7 +248,7 @@ class MultiqcModule(BaseMultiqcModule):
             'shared_key': 'read_count',
         }
         self.cellranger_count_qc_headers = headers
-        gen_stat_cols = ['Mean Reads per Cell', 'Estimated Number of Cells', 'Sequencing Saturation']
+        gen_stat_cols = ['Mean Reads per Cell', 'Estimated Number of Cells', 'Sequencing Saturation', 'Reads Mapped Confidently to Genome', 'Reads Mapped Confidently to Transcriptome']
         gen_stat_headers = {k: headers[k] for k in gen_stat_cols}
         self.general_stats_addcols(self.cellranger_count_data, gen_stat_headers)
 

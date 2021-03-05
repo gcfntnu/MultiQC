@@ -32,4 +32,5 @@ Thumbs.db
 .idea/
 
 #vim
-.sw[pomn]
+*.sw[op]
+
