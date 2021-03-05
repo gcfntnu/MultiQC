@@ -49,7 +49,7 @@ class MultiqcModule(BaseMultiqcModule):
         # General Stats Table
         self.cellranger_count_set_table_headers()
         self.add_section(
-            name = "cellranger count summary",
+            name = "Summary",
             anchor = "cellranger_count-summary",
             description = "QC metrics from cellranger single cell gene quantification.",
             plot = table.plot(self.cellranger_count_data, self.cellranger_count_qc_headers, {})
@@ -81,8 +81,9 @@ class MultiqcModule(BaseMultiqcModule):
         """
 
         keys = OrderedDict()
-        for k in ["Reads Mapped Confidently to Intergenic Regions", "Reads Mapped Confidently to Intronic Regions"," Reads Mapped Confidently to Exonic Regions"]:
-            self.cellranger_cound_data[k] = float(self.cellranger_cound_data[k].replace("%",""))
+        for s in self.cellranger_count_data.keys():
+            for k in ["Reads Mapped Confidently to Intergenic Regions", "Reads Mapped Confidently to Intronic Regions", "Reads Mapped Confidently to Exonic Regions"]:
+                self.cellranger_count_data[s][k] = float(self.cellranger_count_data[s][k].replace("%",""))
         keys["Reads Mapped Confidently to Exonic Regions"] = {"name": "Exonic"}
         keys["Reads Mapped Confidently to Intronic Regions"] = {"name": "Intronic"}
         keys["Reads Mapped Confidently to Intergenic Regions"] = {"name": "Intergenic"}
@@ -248,7 +249,7 @@ class MultiqcModule(BaseMultiqcModule):
             'shared_key': 'read_count',
         }
         self.cellranger_count_qc_headers = headers
-        gen_stat_cols = ['Mean Reads per Cell', 'Estimated Number of Cells', 'Sequencing Saturation', 'Reads Mapped Confidently to Genome', 'Reads Mapped Confidently to Transcriptome']
+        gen_stat_cols = ['Mean Reads per Cell', 'Estimated Number of Cells', 'Sequencing Saturation', 'Reads Mapped Confidently to Genome', 'Reads Mapped Confidently to Transcriptome', 'Total Genes Detected']
         gen_stat_headers = {k: headers[k] for k in gen_stat_cols}
         self.general_stats_addcols(self.cellranger_count_data, gen_stat_headers)
 
