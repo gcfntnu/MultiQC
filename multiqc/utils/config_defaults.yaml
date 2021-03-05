@@ -444,6 +444,9 @@ module_order:
     - starsolo:
         module_tag:
             - RNA
+    - cellranger_count:
+        module_tag:
+            - RNA
     - hisat2:
         module_tag:
             - RNA
@@ -517,6 +520,9 @@ module_order:
         module_tag:
             - RNA
             - DNA
+    - fastv:
+        module_tag:
+             - DNA
     - fastqc:
         module_tag:
             - RNA
