@@ -100,6 +100,7 @@ setup(
             'bowtie2 = multiqc.modules.bowtie2:MultiqcModule',
             'busco = multiqc.modules.busco:MultiqcModule',
             'cellranger = multiqc.modules.cellranger:MultiqcModule',
+            'cellranger_count = multiqc.modules.cellranger_count:MultiqcModule',
             'starsolo = multiqc.modules.starsolo:MultiqcModule',
             'qiime2 = multiqc.modules.qiime2:MultiqcModule',
             'clipandmerge = multiqc.modules.clipandmerge:MultiqcModule',
