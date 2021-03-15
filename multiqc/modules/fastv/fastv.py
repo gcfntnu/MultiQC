@@ -28,6 +28,7 @@ class MultiqcModule(BaseMultiqcModule):
 
         # Find and load any fastp reports
         self.genomes = set()
+        self.genome_name = None
         self.fastp_data = dict()
         self.fastp_duplication_plotdata = dict()
         self.fastp_insert_size_data = dict()
@@ -148,7 +149,7 @@ class MultiqcModule(BaseMultiqcModule):
                     self.fastv_coverage_plotdata,
                     {
                         'id': 'fastv-coverage-plot',
-                        'title': 'Coverage: {}'.format('NC_045512.2'),
+                        'title': self.genome_name or 'Coverage: {}'.format('NC_045512.2'),
                         'xlab': 'Nucleotide position',
                         'ylab': 'Coverage',
                         'ymin': 0,
@@ -175,7 +176,10 @@ class MultiqcModule(BaseMultiqcModule):
             return None
         for i, v in enumerate(cmd):
             if v == '-i':
-                s_name = self.clean_s_name(cmd[i+1], f['root'])
+                s_name = cmd[i+1]
+                if s_name.endswith('_R1.fastq.gz'): #fixme
+                    s_name = s_name[:-12]
+                s_name = self.clean_s_name(s_name, f['root'])
         if s_name == 'fastv': # input might be stdin, try output file before failing
             for i, v in enumerate(cmd):
                 if v == '-o':
@@ -200,7 +204,7 @@ class MultiqcModule(BaseMultiqcModule):
         if 'genome_mapping_result' in parsed_json:
             # note: ignoring multiple genomes, only reporting on the first genome
             genome = parsed_json['genome_mapping_result']['genome_coverage'][0]
-            print(genome)
+            self.genome_name = genome['name']
             try:
                 self.fastp_data[s_name] = {k: genome[k] for k in ('coverage_rate', 'avg_mismatch_ratio')}
             except KeyError:
