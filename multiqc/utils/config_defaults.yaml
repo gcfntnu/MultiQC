@@ -187,6 +187,11 @@ fn_clean_exts:
     - '.selfSM'
     - '.extendedFrags'
     - '_SummaryStatistics'
+    - '.namesorted'
+    - '.sorted'
+    - '_R1'
+    - '_R2'
+
 
 # These are removed after the above, only if sample names
 # start or end with this string. Again, removed in order.
