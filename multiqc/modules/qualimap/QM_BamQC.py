@@ -432,6 +432,7 @@ def report_sections(self):
                 'ymin': 0,
                 'xmin': 0,
                 'tt_label': '<b>{point.x} bp</b>: {point.y}',
+                'smooth_points': 100,
             })
         )
 

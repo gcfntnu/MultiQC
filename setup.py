@@ -43,12 +43,12 @@ if sys.version_info[0:2] < (3, 6):
     # Numpy v1.17 dropped Python 2 and Python 3.4 support
     numpy_version = '<1.17'
     networkx_version = '<2.3'
-else:
+#else:
     # Unlike pip, setuptools install_requires will install pre-releases!
     # Matplotlib often ships these and they very often break
     # Pinning a maximum version prevents this, but can make dependency management more difficult, sorry!
     # See: https://github.com/pypa/setuptools/issues/855
-    matplotlib_version += ',<3.1.2'
+    #matplotlib_version += ',<=3.4.2'
 
 install_requires = [
         'matplotlib' + matplotlib_version,
