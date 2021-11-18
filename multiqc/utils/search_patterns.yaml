@@ -175,9 +175,6 @@ bowtie2:
     - "bisulfite"
     - "HiC-Pro"
   shared: true
-    fn: 'short_summary_*'
-    contents: 'BUSCO version is:'
-    num_lines: 1
 busco:
   fn: "short_summary*"
   contents: "BUSCO version is:"
