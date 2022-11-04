@@ -89,6 +89,13 @@ class MultiqcModule(BaseMultiqcModule):
 
             # Alignment bar plot
             self.add_section(name="Alignment Scores", anchor="star_alignments", plot=self.star_alignment_chart())
+            # Splice bar plot
+            self.add_section(
+                name="Spliced Reads", 
+                anchor="star_spliced_reads", 
+                description="Other uniquely mapped = Uniquely mapped reads total - Number of splices total", 
+                plot=self.star_spliced_chart()
+                )
 
         if len(self.star_genecounts_unstranded) > 0:
             self.add_section(
@@ -140,6 +147,9 @@ class MultiqcModule(BaseMultiqcModule):
             total_unmapped_percent = parsed_data['unmapped_mismatches_percent'] + parsed_data['unmapped_tooshort_percent'] + parsed_data['unmapped_other_percent']
             parsed_data['total_mapped'] = total_mapped
             parsed_data['total_mapped_percent'] = round(100*float(total_mapped)/float(parsed_data['total_reads']),2)
+            parsed_data['total_spliced_percent'] = round(100*float(parsed_data['num_splices'])/float(parsed_data['uniquely_mapped']),2)
+            parsed_data['novel_spliced_percent'] = round(100*float(parsed_data['num_splices']-parsed_data['num_annotated_splices'])/float(parsed_data['num_splices']),2)
+            parsed_data['other_uniquely_mapped'] = parsed_data['uniquely_mapped'] - parsed_data['num_splices']
             try:
                 parsed_data["unmapped_mismatches"] = int(
                     round(unmapped_count * (parsed_data["unmapped_mismatches_percent"] / total_unmapped_percent), 0)
@@ -216,6 +226,22 @@ class MultiqcModule(BaseMultiqcModule):
             'modify': lambda x: x * config.read_count_multiplier,
             'shared_key': 'read_count'
         }
+        headers['total_spliced_percent'] = {
+            'title': '% Spliced',
+            'description': '% total spliced reads / uniquely mapped reads',
+            'max': 100,
+            'min': 0,
+            'suffix': '%',
+            'scale': 'YlGn'
+        }
+        headers['novel_spliced_percent'] = {
+            'title': '% Novel Spliced',
+            'description': '% (total spliced reads-annotated spliced reads) / total spliced reads',
+            'max': 100,
+            'min': 0,
+            'suffix': '%',
+            'scale': 'YlGn'
+        }
         """
         headers['uniquely_mapped_percent'] = {
             'title': '% Aligned',
@@ -257,6 +283,28 @@ class MultiqcModule(BaseMultiqcModule):
         }
 
         return bargraph.plot(self.star_data, keys, pconfig)
+
+    def star_spliced_chart(self):
+        """Make the plot showing alignment rates"""
+
+        # Specify the order of the different possible categories
+        keys = OrderedDict()
+        keys["num_GTAG_splices"] = {"color": "#437bb1", "name": "GT/AG"}
+        keys["num_GCAG_splices"] = {"color": "#7cb5ec", "name": "GC/AG"}
+        keys["num_ATAC_splices"] = {"color": "#f7a35c", "name": "AT/AC"}
+        keys["num_noncanonical_splices"] = {"color": "#e63491", "name": "Non-canonical"}
+        keys["other_uniquely_mapped"] = {"color": "#b1084c", "name": "Other uniquely mapped reads"}
+
+        # Config for the plot
+        pconfig = {
+            "id": "star_splice_plot",
+            "title": "STAR: Spliced Reads",
+            "ylab": "# Reads",
+            "cpswitch_counts_label": "Number of Reads",
+        }
+
+        return bargraph.plot(self.star_data, keys, pconfig)
+
 
     def star_genecount_chart(self):
         """Make a plot for the ReadsPerGene output"""
