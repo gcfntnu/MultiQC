@@ -42,7 +42,7 @@ class MultiqcModule(BaseMultiqcModule):
         self.t_ranks["R"] = "Root"
         # self.t_ranks['U'] = 'Unclassified'
 
-        self.top_n = 5
+        self.top_n = getattr(config, "kraken", {}).get("top_n", 5) 
 
         # Find and load any kraken reports
         self.kraken_raw_data = dict()
