@@ -2,16 +2,16 @@
 
 """ MultiQC datatable class, used by tables and beeswarm plots """
 
-from collections import defaultdict, OrderedDict
 import logging
 import re
+from collections import defaultdict
 
 from multiqc.utils import config, report
 
 logger = logging.getLogger(__name__)
 
 
-class datatable(object):
+class DataTable:
     """Data table class. Prepares and holds data and configuration
     for either a table or a beeswarm plot."""
 
@@ -22,10 +22,15 @@ class datatable(object):
         if pconfig is None:
             pconfig = {}
 
+        # Allow user to overwrite any given config for this plot
+        if "id" in pconfig and pconfig["id"] and pconfig["id"] in config.custom_plot_config:
+            for k, v in config.custom_plot_config[pconfig["id"]].items():
+                pconfig[k] = v
+
         # Given one dataset - turn it into a list
-        if type(data) is not list:
+        if not isinstance(data, list):
             data = [data]
-        if type(headers) is not list:
+        if not isinstance(headers, list):
             headers = [headers]
 
         sectcols = [
@@ -39,11 +44,9 @@ class datatable(object):
             "247,129,191",
             "153,153,153",
         ]
-        shared_keys = defaultdict(lambda: dict())
 
         # Go through each table section
         for idx, d in enumerate(data):
-
             # Get the header keys
             try:
                 keys = headers[idx].keys()
@@ -53,7 +56,6 @@ class datatable(object):
 
             # Add header keys from the data
             if pconfig.get("only_defined_headers", True) is False:
-
                 # Get the keys from the data
                 keys = list()
                 for samp in d.values():
@@ -66,11 +68,11 @@ class datatable(object):
                     headers[idx]
                 except IndexError:
                     headers.append(list)
-                    headers[idx] = OrderedDict()
+                    headers[idx] = dict()
                 else:
-                    # Convert the existing headers into an OrderedDict (eg. if parsed from a config)
+                    # Convert the existing headers into a dict (e.g. if parsed from a config)
                     od_tuples = [(key, headers[idx][key]) for key in headers[idx].keys()]
-                    headers[idx] = OrderedDict(od_tuples)
+                    headers[idx] = dict(od_tuples)
 
                 # Create empty header configs for each new data key
                 for k in keys:
@@ -82,7 +84,7 @@ class datatable(object):
             for k in list(headers[idx].keys()):
                 headers[idx][str(k)] = headers[idx].pop(k)
             # Ensure that all sample names are strings as well
-            cdata = OrderedDict()
+            cdata = dict()
             for k, v in data[idx].items():
                 cdata[str(k)] = v
             data[idx] = cdata
@@ -148,11 +150,16 @@ class datatable(object):
                         cidx -= len(sectcols)
                     headers[idx][k]["colour"] = sectcols[cidx]
 
+                # Overwrite (2nd time) any given config with table-level user config
+                # This is to override column-specific values set by modules
+                if "id" in pconfig and pconfig["id"] and pconfig["id"] in config.custom_plot_config:
+                    for cpc_k, cpc_v in config.custom_plot_config[pconfig["id"]].items():
+                        headers[idx][k][cpc_k] = cpc_v
+
                 # Overwrite hidden if set in user config
                 for ns in config.table_columns_visible.keys():
                     # Make namespace key case insensitive
                     if ns.lower() == headers[idx][k]["namespace"].lower():
-
                         # First - if config value is a bool, set all module columns to that value
                         if isinstance(config.table_columns_visible[ns], bool):
                             headers[idx][k]["hidden"] = not config.table_columns_visible[ns]
@@ -169,7 +176,6 @@ class datatable(object):
                 for ns in config.table_columns_name.keys():
                     # Make namespace key case insensitive
                     if ns.lower() == headers[idx][k]["namespace"].lower():
-
                         # Assume a dict of the specific column IDs
                         try:
                             headers[idx][k]["title"] = config.table_columns_name[ns][k]
@@ -187,18 +193,24 @@ class datatable(object):
                     except (KeyError, ValueError):
                         pass
 
+                # Overwrite any header config if set in config
+                for custom_k, custom_v in (
+                    config.custom_table_header_config.get(pconfig.get("id"), {}).get(k, {}).items()
+                ):
+                    headers[idx][k][custom_k] = custom_v
+
                 # Work out max and min value if not given
                 setdmax = False
                 setdmin = False
                 try:
                     headers[idx][k]["dmax"] = float(headers[idx][k]["max"])
-                except TypeError:
+                except Exception:
                     headers[idx][k]["dmax"] = 0
                     setdmax = True
 
                 try:
                     headers[idx][k]["dmin"] = float(headers[idx][k]["min"])
-                except TypeError:
+                except Exception:
                     headers[idx][k]["dmin"] = 0
                     setdmin = True
 
@@ -241,18 +253,12 @@ class datatable(object):
                     )
 
         # Overwrite shared key settings and at the same time assign to buckets for sorting
-        # Within each section of headers, sort explicitly by 'title' if the dict
-        # is not already ordered, so the final ordering is by:
-        # placement > section > explicit_ordering > title
+        # So the final ordering is:
+        #   placement > section > explicit_ordering
         # Of course, the user can shuffle these manually.
         self.headers_in_order = defaultdict(list)
-
         for idx, hs in enumerate(headers):
-            keys_in_section = hs.keys()
-            if type(hs) is not OrderedDict:
-                keys_in_section = sorted(keys_in_section, key=lambda k: headers[idx][k]["title"])
-
-            for k in keys_in_section:
+            for k in hs.keys():
                 sk = headers[idx][k]["shared_key"]
                 if sk is not None:
                     headers[idx][k]["dmax"] = shared_keys[sk]["dmax"]
