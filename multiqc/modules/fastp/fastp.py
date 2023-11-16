@@ -5,6 +5,7 @@ import json
 import logging
 import re
 from typing import Dict, Optional, Tuple
+from collections import OrderedDict
 
 from multiqc import config
 from multiqc.modules.base_module import BaseMultiqcModule, ModuleNoSamplesFound
