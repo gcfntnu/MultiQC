@@ -1,16 +1,14 @@
-#!/usr/bin/env python
-
 """ MultiQC module to parse output from STAR """
 
-from __future__ import print_function
-from collections import OrderedDict
+
 import logging
 import os
 import re
+from collections import OrderedDict
 
 from multiqc import config
+from multiqc.modules.base_module import BaseMultiqcModule, ModuleNoSamplesFound
 from multiqc.plots import bargraph
-from multiqc.modules.base_module import BaseMultiqcModule
 
 # Initialise the logger
 log = logging.getLogger(__name__)
@@ -18,7 +16,6 @@ log = logging.getLogger(__name__)
 
 class MultiqcModule(BaseMultiqcModule):
     def __init__(self):
-
         # Initialise the parent object
         super(MultiqcModule, self).__init__(
             name="STAR",
@@ -65,7 +62,11 @@ class MultiqcModule(BaseMultiqcModule):
         self.star_genecounts_second_strand = self.ignore_samples(self.star_genecounts_second_strand)
 
         if len(self.star_data) == 0 and len(self.star_genecounts_unstranded) == 0:
-            raise UserWarning
+            raise ModuleNoSamplesFound
+
+        # Superfluous function call to confirm that it is used in this module
+        # Replace None with actual version if it is available
+        self.add_software_version(None)
 
         if len(self.star_data) > 0:
             if len(self.star_genecounts_unstranded) > 0:
@@ -80,7 +81,6 @@ class MultiqcModule(BaseMultiqcModule):
             log.info("Found {} gene count files".format(len(self.star_genecounts_unstranded)))
 
         if len(self.star_data) > 0:
-
             # Write parsed report data to a file
             self.write_data_file(self.star_data, "multiqc_star")
 
@@ -180,8 +180,8 @@ class MultiqcModule(BaseMultiqcModule):
         second_strand = {"N_genes": 0}
         num_errors = 0
         num_genes = 0
-        for l in f["f"]:
-            s = l.split("\t")
+        for line in f["f"]:
+            s = line.split("\t")
             try:
                 for i in [1, 2, 3]:
                     s[i] = float(s[i])
@@ -266,13 +266,14 @@ class MultiqcModule(BaseMultiqcModule):
         """Make the plot showing alignment rates"""
 
         # Specify the order of the different possible categories
-        keys = OrderedDict()
-        keys["uniquely_mapped"] = {"color": "#437bb1", "name": "Uniquely mapped"}
-        keys["multimapped"] = {"color": "#7cb5ec", "name": "Mapped to multiple loci"}
-        keys["multimapped_toomany"] = {"color": "#f7a35c", "name": "Mapped to too many loci"}
-        keys["unmapped_mismatches"] = {"color": "#e63491", "name": "Unmapped: too many mismatches"}
-        keys["unmapped_tooshort"] = {"color": "#b1084c", "name": "Unmapped: too short"}
-        keys["unmapped_other"] = {"color": "#7f0000", "name": "Unmapped: other"}
+        keys = {
+            "uniquely_mapped": {"color": "#437bb1", "name": "Uniquely mapped"},
+            "multimapped": {"color": "#7cb5ec", "name": "Mapped to multiple loci"},
+            "multimapped_toomany": {"color": "#f7a35c", "name": "Mapped to too many loci"},
+            "unmapped_mismatches": {"color": "#e63491", "name": "Unmapped: too many mismatches"},
+            "unmapped_tooshort": {"color": "#b1084c", "name": "Unmapped: too short"},
+            "unmapped_other": {"color": "#7f0000", "name": "Unmapped: other"},
+        }
 
         # Config for the plot
         pconfig = {
@@ -310,12 +311,13 @@ class MultiqcModule(BaseMultiqcModule):
         """Make a plot for the ReadsPerGene output"""
 
         # Specify the order of the different possible categories
-        keys = OrderedDict()
-        keys["N_genes"] = {"color": "#2f7ed8", "name": "Overlapping Genes"}
-        keys["N_noFeature"] = {"color": "#0d233a", "name": "No Feature"}
-        keys["N_ambiguous"] = {"color": "#492970", "name": "Ambiguous Features"}
-        keys["N_multimapping"] = {"color": "#f28f43", "name": "Multimapping"}
-        keys["N_unmapped"] = {"color": "#7f0000", "name": "Unmapped"}
+        keys = {
+            "N_genes": {"color": "#2f7ed8", "name": "Overlapping Genes"},
+            "N_noFeature": {"color": "#0d233a", "name": "No Feature"},
+            "N_ambiguous": {"color": "#492970", "name": "Ambiguous Features"},
+            "N_multimapping": {"color": "#f28f43", "name": "Multimapping"},
+            "N_unmapped": {"color": "#7f0000", "name": "Unmapped"},
+        }
 
         # Config for the plot
         pconfig = {
