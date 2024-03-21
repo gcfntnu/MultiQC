@@ -215,6 +215,7 @@ setup(
             'fastqc_rnaseq = multiqc.modules.fastqc_rnaseq:MultiqcModule',
             'fastv = multiqc.modules.fastv:MultiqcModule',
             'unitas = multiqc.modules.unitas:MultiqcModule'
+            'unitas = multiqc.modules.parse:MultiqcModule'
         ],
         "multiqc.templates.v1": [
             "default = multiqc.templates.default",
