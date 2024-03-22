@@ -59,12 +59,12 @@ class MultiqcModule(BaseMultiqcModule):
     def parse_log(self, f):
         """ Parse the csv Summary output from parse and save the summary statistics """
         try:
-            parsed_csv = pd.read_csv(f['f'], header=0, index_col=0)
+            parsed_csv = pd.read_csv(f['f'], header=None, index_col=0, skiprows=1).T
         except:
             log.warn("Could not parse csv: '{}'".format(f['fn']))
             return None
-        s_name = f['fn'].replace(".agg_samp_ana_symmary.csv", "")
-        s_data = parsed_csv.to_dict(orient='index')
+        s_name = f['fn'].replace(".agg_samp_ana_summary.csv", "")
+        s_data = parsed_csv.to_dict(orient='index')[1]
         self.parse_data[s_name] = s_data
 
 
