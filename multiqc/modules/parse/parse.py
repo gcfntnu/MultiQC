@@ -180,7 +180,7 @@ class MultiqcModule(BaseMultiqcModule):
             'shared_key': 'read_count',
         }
         self.parse_qc_headers = headers
-        gen_stat_cols = ['mean_reads_per_cell', 'number_of_cells', 'sequencing_saturation', 'transcriptome_map_fraction']
+        gen_stat_cols = ['numeber_of_reads', 'mean_reads_per_cell', 'number_of_cells', 'sequencing_saturation', 'transcriptome_map_fraction']
         gen_stat_headers = {k: headers[k] for k in gen_stat_cols}
         self.general_stats_addcols(self.parse_data, gen_stat_headers)
 
