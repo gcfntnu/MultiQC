@@ -4,7 +4,7 @@ import json
 import logging
 import os
 
-from multiqc.base_module import BaseMultiqcModule, ModuleNoSamplesFound
+from multiqc.modules.base_module import BaseMultiqcModule, ModuleNoSamplesFound
 from multiqc.plots import linegraph
 from multiqc import config
 
