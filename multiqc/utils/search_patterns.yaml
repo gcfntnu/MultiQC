@@ -892,4 +892,4 @@ unitas/seqlen:
 unitas/mirna:
   fn: 'miR-table_*.simplified.txt'
 parse:
-  fn: '*.agg_samp_ana_summary.csv'
+  fn: 'agg_sample_summary.csv'
