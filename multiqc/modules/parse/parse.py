@@ -5,6 +5,7 @@
 from __future__ import print_function
 from collections import OrderedDict
 import logging
+import os
 import pandas as pd
 from multiqc import config
 from multiqc.plots import bargraph, linegraph, table
@@ -59,11 +60,12 @@ class MultiqcModule(BaseMultiqcModule):
     def parse_log(self, f):
         """ Parse the csv Summary output from parse and save the summary statistics """
         try:
-            s_data = pd.read_csv(f['f'], header=0, index_col=0).loc[:, 'all-sample']
+            s_data = pd.read_csv(f['f'], header=0, index_col=0).loc['all-sample',:]
         except:
             log.warn("Could not parse csv: '{}'".format(f['fn']))
             return None
-        s_name = f['fn'].replace(".agg_samp_ana_summary.csv", "")
+        #s_name = f['fn'].replace(".agg_samp_ana_summary.csv", "")
+        s_name = os.path.basename(f['root'])
         self.parse_data[s_name] = s_data
 
 
